@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 650" fill="none">
+  <defs>
+    <linearGradient id="canvas" x1="58" y1="28" x2="833" y2="640" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f8f7f1"/>
+      <stop offset="1" stop-color="#e2e4dc"/>
+    </linearGradient>
+    <linearGradient id="leather" x1="451" y1="111" x2="755" y2="295" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#eceee6"/>
+      <stop offset="1" stop-color="#cdd1c5"/>
+    </linearGradient>
+    <linearGradient id="foam" x1="189" y1="393" x2="691" y2="511" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#d5ff3f"/>
+      <stop offset="1" stop-color="#aebb73"/>
+    </linearGradient>
+    <linearGradient id="rubber" x1="374" y1="449" x2="767" y2="585" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#34382e"/>
+      <stop offset="1" stop-color="#151713"/>
+    </linearGradient>
+    <pattern id="mesh" width="17" height="17" patternUnits="userSpaceOnUse">
+      <circle cx="4" cy="4" r="1.6" fill="#73796a" fill-opacity=".42"/>
+      <circle cx="13" cy="12" r="1.6" fill="#73796a" fill-opacity=".42"/>
+    </pattern>
+    <pattern id="grain" width="28" height="28" patternUnits="userSpaceOnUse">
+      <path d="m3 7 7-2m3 16 8-3M2 23l4-1m13-17 5 2" stroke="#74796a" stroke-opacity=".16" stroke-width="1.4" stroke-linecap="round"/>
+    </pattern>
+    <pattern id="tread" width="28" height="26" patternUnits="userSpaceOnUse" patternTransform="rotate(-22)">
+      <path d="M4 4h17M4 13h17M4 22h17" stroke="#c5c9bd" stroke-opacity=".72" stroke-width="3" stroke-linecap="round"/>
+    </pattern>
+    <filter id="shadow" x="79" y="73" width="773" height="557" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="17"/>
+    </filter>
+    <clipPath id="mesh-clip">
+      <path d="m85 209 102-110c12-13 31-15 46-6l165 100c16 10 21 32 10 48l-85 124c-11 16-33 21-49 10L91 255c-17-10-19-31-6-46Z"/>
+    </clipPath>
+    <clipPath id="leather-clip">
+      <path d="m474 78 270 91c19 6 28 28 19 46l-41 81c-8 16-26 23-43 17l-249-91c-21-8-29-33-15-51l62-80c9-12 24-17 37-13Z"/>
+    </clipPath>
+    <clipPath id="foam-clip">
+      <path d="m207 362 375-63c17-3 34 7 40 23l44 114c7 19-5 40-25 44l-377 76c-16 3-32-5-39-20l-43-127c-7-21 6-43 25-47Z"/>
+    </clipPath>
+    <clipPath id="rubber-clip">
+      <path d="m420 449 320-56c18-3 35 7 41 24l31 78c8 20-5 42-26 46l-323 54c-17 3-34-6-40-22l-28-76c-7-21 5-44 25-48Z"/>
+    </clipPath>
+  </defs>
+  <path fill="url(#canvas)" d="M0 0h900v650H0z"/>
+  <ellipse cx="466" cy="554" fill="#151713" fill-opacity=".18" filter="url(#shadow)" rx="343" ry="36"/>
+  <circle cx="465" cy="326" r="245" stroke="#151713" stroke-opacity=".13"/>
+  <circle cx="465" cy="326" r="201" stroke="#151713" stroke-opacity=".09" stroke-dasharray="2 9"/>
+  <path d="m85 209 102-110c12-13 31-15 46-6l165 100c16 10 21 32 10 48l-85 124c-11 16-33 21-49 10L91 255c-17-10-19-31-6-46Z" fill="#f5f5ef" stroke="#34382e" stroke-opacity=".55" stroke-width="3"/>
+  <g clip-path="url(#mesh-clip)">
+    <path d="M72 91h348v306H72z" fill="url(#mesh)"/>
+    <path d="m95 211 103-112 208 126-88 133L95 211Z" fill="#fff" fill-opacity=".18"/>
+    <path d="m88 243 214 130" stroke="#fff" stroke-opacity=".8" stroke-width="7"/>
+  </g>
+  <path d="m474 78 270 91c19 6 28 28 19 46l-41 81c-8 16-26 23-43 17l-249-91c-21-8-29-33-15-51l62-80c9-12 24-17 37-13Z" fill="url(#leather)" stroke="#34382e" stroke-opacity=".6" stroke-width="3"/>
+  <g clip-path="url(#leather-clip)">
+    <path d="M402 58h382v279H402z" fill="url(#grain)"/>
+    <path d="m465 82 263 91" stroke="#fff" stroke-opacity=".75" stroke-width="9"/>
+    <path d="m452 112 270 92" stroke="#a3a89a" stroke-opacity=".55" stroke-width="2" stroke-dasharray="5 8"/>
+  </g>
+  <path d="m207 362 375-63c17-3 34 7 40 23l44 114c7 19-5 40-25 44l-377 76c-16 3-32-5-39-20l-43-127c-7-21 6-43 25-47Z" fill="url(#foam)" stroke="#34382e" stroke-opacity=".62" stroke-width="3"/>
+  <g clip-path="url(#foam-clip)">
+    <path d="m181 356 497-85 61 222-495 98-63-235Z" fill="url(#grain)" opacity=".34"/>
+    <path d="m210 396 403-68m-384 120 414-72m-394 127 398-76" stroke="#f8f7f1" stroke-opacity=".5" stroke-width="5"/>
+  </g>
+  <path d="m420 449 320-56c18-3 35 7 41 24l31 78c8 20-5 42-26 46l-323 54c-17 3-34-6-40-22l-28-76c-7-21 5-44 25-48Z" fill="url(#rubber)" stroke="#151713" stroke-width="3"/>
+  <g clip-path="url(#rubber-clip)">
+    <path d="m393 437 453-79 49 185-457 78-45-184Z" fill="url(#tread)"/>
+  </g>
+  <path d="M120 70v-22h24m617 492h25v-23" stroke="#859044" stroke-width="3"/>
+  <circle cx="151" cy="69" r="5" fill="#d5ff3f"/>
+  <circle cx="762" cy="521" r="5" fill="#d5ff3f"/>
+  <path d="m360 155 44-32m-185 241 42-26m294-12 56-24m-12 183 48-11" stroke="#74796a" stroke-opacity=".62" stroke-width="1.5"/>
+  <circle cx="404" cy="123" r="4" fill="#859044"/>
+  <circle cx="261" cy="364" r="4" fill="#859044"/>
+  <circle cx="569" cy="322" r="4" fill="#859044"/>
+  <circle cx="647" cy="494" r="4" fill="#859044"/>
+  <text x="63" y="580" fill="#55594f" font-family="Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="2">MATERIAL STUDY / 01—04</text>
+  <text x="663" y="87" fill="#55594f" font-family="Arial, sans-serif" font-size="10" font-weight="700" letter-spacing="2">TEXTURE</text>
+  <text x="114" y="391" fill="#55594f" font-family="Arial, sans-serif" font-size="10" font-weight="700" letter-spacing="2">BREATHABLE MESH</text>
+  <text x="663" y="328" fill="#55594f" font-family="Arial, sans-serif" font-size="10" font-weight="700" letter-spacing="2">LEATHER</text>
+  <text x="710" y="578" fill="#f4f3ee" font-family="Arial, sans-serif" font-size="10" font-weight="700" letter-spacing="2">RUBBER</text>
+</svg>

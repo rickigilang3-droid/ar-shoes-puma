@@ -1,0 +1,94 @@
+/* ═══════════════════════════════════════════════
+   GLOBAL BASE STYLES — AR Shoes
+   ═══════════════════════════════════════════════ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Brand palette */
+  --c-bg:        #f6f7f9;
+  --c-surface:   #ffffff;
+  --c-card:      #ffffff;
+  --c-border:    #e5e7eb;
+  --c-border-hi: #cbd0d8;
+  --c-red:       #d93452;
+  --c-red-glow:  rgba(217,52,82,0.2);
+  --c-text:      #20242c;
+  --c-muted:     #68717e;
+  --c-dim:       rgba(32,36,44,0.4);
+
+  /* Part colors (CSS) */
+  --col-upper:   #4a90e2;
+  --col-midsole: #f59e0b;
+  --col-outsole: #10b981;
+  --col-insole:  #8b5cf6;
+  --col-tongue:  #38bdf8;
+  --col-heel:    #ef4444;
+
+  /* Misc */
+  --radius-sm:  10px;
+  --radius-md:  18px;
+  --radius-lg:  28px;
+  --shadow-lg:  0 24px 64px rgba(31,41,55,0.12);
+  --trans:      all .28s cubic-bezier(.4,0,.2,1);
+  --font:       'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+#root { min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ── Utility ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .7rem 1.5rem;
+  border: none;
+  border-radius: 50px;
+  font-size: .95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--trans);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-primary  { background: var(--c-red); color: #fff; }
+.btn-primary:hover {
+  background: #ff5f78;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px var(--c-red-glow);
+}
+.btn-ghost {
+  background: #fff;
+  color: var(--c-text);
+  border: 1px solid var(--c-border);
+}
+.btn-ghost:hover {
+  background: #f0f2f5;
+  border-color: var(--c-border-hi);
+}
+
+/* AR fullscreen container */
+.ar-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #000;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--c-bg); }
+::-webkit-scrollbar-thumb { background: #c4c9d1; border-radius: 3px; }

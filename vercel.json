@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/shoe/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/compare/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/ar/:path*",
+      "destination": "/index.html"
+    }
+  ]
+}

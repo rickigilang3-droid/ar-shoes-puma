@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AR Shoes — Kartu Target</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #f5f5f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.12);
+      padding: 2rem;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+    }
+    h1 { font-size: 1.4rem; color: #1a1a2e; margin-bottom: 0.5rem; }
+    p  { color: #666; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .target-img {
+      width: 100%;
+      border-radius: 8px;
+      border: 3px solid #e94560;
+      display: block;
+      margin-bottom: 1.5rem;
+    }
+    .steps { text-align: left; }
+    .step  { display: flex; gap: 0.75rem; margin-bottom: 0.75rem; align-items: flex-start; }
+    .num   { background: #e94560; color: #fff; width: 26px; height: 26px; border-radius: 50%;
+             display: flex; align-items: center; justify-content: center; font-size: 0.8rem;
+             font-weight: 700; flex-shrink: 0; }
+    .step-text { font-size: 0.88rem; color: #444; line-height: 1.5; padding-top: 2px; }
+    .badge {
+      display: inline-block;
+      background: #1a1a2e; color: #fff;
+      border-radius: 50px; padding: 0.35rem 1rem;
+      font-size: 0.8rem; margin-top: 1.25rem;
+    }
+    @media print {
+      body { background: #fff; padding: 0; }
+      .card { box-shadow: none; border-radius: 0; max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>👟 AR Shoes — Kartu Target AR</h1>
+    <p>Tampilkan kartu ini di perangkat lain atau cetak, lalu arahkan kamera AR ke seluruh kartu agar sepatu 3D muncul.</p>
+    <img class="target-img" src="/targets/shoe-qr.png" alt="Kartu target AR Shoes" />
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <div class="step-text">Tampilkan seluruh kartu ini di perangkat lain atau cetak dengan ukuran yang jelas</div>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <div class="step-text">Tekan <strong>Mulai Scan AR</strong> di situs dan izinkan akses kamera</div>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <div class="step-text">Arahkan kamera AR ke seluruh kartu sampai sepatu 3D muncul</div>
+      </div>
+      <div class="step">
+        <div class="num">4</div>
+        <div class="step-text">Klik atau tap bagian sepatu untuk membaca informasi edukasi</div>
+      </div>
+    </div>
+    <div class="badge">💡 Jaga seluruh kartu tetap fokus dan terlihat oleh kamera</div>
+  </div>
+</body>
+</html>
