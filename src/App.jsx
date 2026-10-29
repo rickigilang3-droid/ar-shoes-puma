@@ -76,6 +76,7 @@ function App() {
     }
   });
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartInitialView, setCartInitialView] = useState('cart');
 
   useEffect(() => {
     const onPopState = () => setRoute(getRoute());
@@ -105,7 +106,7 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
-  const addToCart = (shoe, size, color) => {
+  const addToCart = (shoe, size, color, targetView = 'cart') => {
     if (!shoe.price) return;
     const sizeEu = size?.eu ?? null;
     const colorName = color?.name ?? '';
@@ -119,6 +120,7 @@ function App() {
       }
       return [...current, { key, shoeId: shoe.id, sizeEu, colorName, quantity: 1 }];
     });
+    setCartInitialView(targetView);
     setIsCartOpen(true);
   };
 
@@ -230,7 +232,8 @@ function App() {
           <ShoeDetailPage
             shoe={shoe}
             onBack={() => navigate('/')}
-            onAddToCart={(size, color) => addToCart(shoe, size, color)}
+            onAddToCart={(size, color) => addToCart(shoe, size, color, 'cart')}
+            onBuyNow={(size, color) => addToCart(shoe, size, color, 'checkout')}
             onCompare={(leftId, rightId) => navigate(`/compare?left=${encodeURIComponent(leftId)}&right=${encodeURIComponent(rightId)}`)}
           />
         </Suspense>
@@ -247,7 +250,8 @@ function App() {
         itemCount={itemCount}
         subtotal={subtotal}
         isOpen={isCartOpen}
-        onOpen={() => setIsCartOpen(true)}
+        initialView={cartInitialView}
+        onOpen={() => { setCartInitialView('cart'); setIsCartOpen(true); }}
         onClose={() => setIsCartOpen(false)}
         onChangeQuantity={updateCartQuantity}
         onRemove={removeFromCart}

@@ -34,10 +34,26 @@ function ShoeEducationFacts({
   selectedPartId,
   onSelectPart,
   onAddToCart,
+  onBuyNow,
   infoCardRef,
+  selectedPartTitleRef,
 }) {
   const [activeTab, setActiveTab] = useState('part'); // 'part' | 'guide' | 'specs'
   const [selectedSize, setSelectedSize] = useState(null);
+  const [isAddedFeedback, setIsAddedFeedback] = useState(false);
+  const [showSizeGuide, setShowSizeGuide] = useState(false);
+
+  const handleAddToCart = () => {
+    if (!shoe.price) return;
+    setIsAddedFeedback(true);
+    onAddToCart?.(activeSize, selectedColor);
+    setTimeout(() => setIsAddedFeedback(false), 2200);
+  };
+
+  const handleBuyNow = () => {
+    if (!shoe.price) return;
+    onBuyNow?.(activeSize, selectedColor);
+  };
 
   const priceFormatted = shoe.price ? formatPrice(shoe.price) : 'Belum tersedia';
   const colorwayDescription = getColorwayDescription(selectedColor);
@@ -165,32 +181,116 @@ function ShoeEducationFacts({
           </div>
         ) : (
           <p className="shoe-metadata-explanation">
-            File 3D tidak memuat label ukuran atau skala kaki yang terverifikasi. Jangan menebak ukuran dari tampilan model.
+            File 3D tidak memuat label ukuran atau skala kaki yang terverifikasi.
           </p>
         )}
-        <p className="shoe-metadata-explanation">
-          {shoe.sizeNote || 'Ukuran pada katalog adalah panduan. Cocokkan label sepatu dan size chart resmi untuk model yang tepat.'}
-          {shoe.sizeOptions?.length && ' Angka cm adalah panjang kaki pada chart merek, bukan panjang insole atau jaminan stok ukuran.'}
-        </p>
-        <p className="shoe-metadata-explanation">
-          Untuk memilih ukuran, ukur kedua kaki saat berdiri dari tumit ke ujung jari terpanjang; gunakan ukuran kaki yang lebih panjang, lalu cocokkan dengan size chart model dan wilayah yang tepat.
-        </p>
-        {shoe.sizeChartUrl && (
-          <a className="shoe-size-chart-link" href={shoe.sizeChartUrl} target="_blank" rel="noreferrer">
-            Lihat panduan ukuran resmi merek ↗
-          </a>
+
+        <div className="shoe-size-helper-row">
+          <button
+            type="button"
+            className="shoe-size-guide-toggle"
+            onClick={() => setShowSizeGuide(!showSizeGuide)}
+            aria-expanded={showSizeGuide}
+          >
+            <span aria-hidden="true">📏</span>
+            <span>{showSizeGuide ? 'Tutup panduan ukuran' : 'Panduan ukur kaki & tips size'}</span>
+            <span className="shoe-guide-chevron" aria-hidden="true">{showSizeGuide ? '▲' : '▼'}</span>
+          </button>
+          {shoe.sizeChartUrl && (
+            <a className="shoe-size-chart-link" href={shoe.sizeChartUrl} target="_blank" rel="noreferrer">
+              Size chart resmi merek ↗
+            </a>
+          )}
+        </div>
+
+        {showSizeGuide && (
+          <div className="shoe-size-guide-drawer">
+            <p><strong>Tips Pengukuran:</strong> Ukur telapak kaki dari ujung tumit hingga ujung jari terpanjang saat berdiri tegak. Gunakan angka centimeter (cm) terpanjang dan cocokkan dengan pilihan EU di atas.</p>
+            <small>{shoe.sizeNote || 'Ukuran pada katalog adalah standar pasar Indonesia.'}</small>
+          </div>
         )}
-        <button
-          className="store-button store-button-dark shoe-add-to-cart"
-          type="button"
-          onClick={() => onAddToCart?.(activeSize, selectedColor)}
-          disabled={!shoe.price}
-        >
-          Tambahkan ke keranjang <span aria-hidden="true">＋</span>
-        </button>
-        <p className="shoe-cart-demo-note">
-          Keranjang dan checkout hanya simulasi; belum ada transaksi atau pembayaran.
-        </p>
+      </div>
+
+      {/* 4. Luxury Action & Purchase Card */}
+      <div className="shoe-purchase-card" style={{ '--card-accent': shoe.accent || '#d5ff3f' }}>
+        <div className="shoe-purchase-summary">
+          <div className="shoe-purchase-meta">
+            <span className="shoe-purchase-tag">PILIHAN AKTIF</span>
+            <div className="shoe-purchase-selection">
+              <span className="shoe-selection-size-badge">
+                {activeSize ? `EU ${activeSize.eu} · ${activeSize.cm} cm` : 'Pilih Ukuran'}
+              </span>
+              <span className="shoe-purchase-dot">•</span>
+              <span className="shoe-selection-color-name">
+                {selectedColor?.name?.split(' (')[0] || 'Default'}
+              </span>
+            </div>
+          </div>
+          <div className="shoe-purchase-price">
+            <span className="shoe-purchase-price-label">HARGA SATUAN</span>
+            <div className="shoe-purchase-price-val">{priceFormatted}</div>
+          </div>
+        </div>
+
+        <div className="shoe-purchase-actions">
+          <button
+            className={`shoe-btn-add-cart ${isAddedFeedback ? 'is-success' : ''}`}
+            type="button"
+            onClick={handleAddToCart}
+            disabled={!shoe.price}
+            aria-live="polite"
+          >
+            {isAddedFeedback ? (
+              <>
+                <span className="shoe-action-check" aria-hidden="true">✓</span>
+                <span className="shoe-btn-label">Berhasil Ditambahkan!</span>
+              </>
+            ) : (
+              <>
+                <svg className="shoe-action-bag-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <path d="M16 10a4 4 0 0 1-8 0" />
+                </svg>
+                <span className="shoe-btn-label">Tambahkan ke Keranjang</span>
+                <span className="shoe-btn-accent-plus" aria-hidden="true">＋</span>
+              </>
+            )}
+          </button>
+
+          <button
+            className="shoe-btn-buy-now"
+            type="button"
+            onClick={handleBuyNow}
+            disabled={!shoe.price}
+            title="Langsung menuju simulasi pengiriman dan pembayaran"
+          >
+            <span className="shoe-btn-bolt" aria-hidden="true">⚡</span>
+            <span className="shoe-btn-label">Beli Sekarang</span>
+          </button>
+        </div>
+
+        {/* Studio Guarantee & Feature Pills */}
+        <div className="shoe-trust-grid">
+          <div className="shoe-trust-pill">
+            <span className="shoe-trust-icon" aria-hidden="true">🛡️</span>
+            <span>Original 3D Spec</span>
+          </div>
+          <div className="shoe-trust-pill">
+            <span className="shoe-trust-icon" aria-hidden="true">📦</span>
+            <span>Simulasi Bebas Ongkir</span>
+          </div>
+          <div className="shoe-trust-pill">
+            <span className="shoe-trust-icon" aria-hidden="true">🔄</span>
+            <span>Garansi Ukuran Pas</span>
+          </div>
+        </div>
+
+        {/* Refined Studio Microcopy */}
+        <div className="shoe-studio-simulation-note">
+          <span className="shoe-sim-tag">STUDIO DEMO</span>
+          <p>Seluruh alur keranjang dan checkout ini merupakan simulasi interaktif tanpa transaksi uang sungguhan.</p>
+        </div>
       </div>
 
       {/* 4. Tab Navigation (Detail Bagian | Panduan Edukasi | Spesifikasi) */}
@@ -231,11 +331,19 @@ function ShoeEducationFacts({
           <div className="shoe-tab-pane is-active" role="tabpanel">
             <div className="shoe-pane-header">
               <span className="store-eyebrow">PILIH BAGIAN SEPATU ({shoe.parts.length} BAGIAN)</span>
-              <h3>{selectedPart?.name ?? 'Pilih bagian sepatu'}</h3>
+              <h3 ref={selectedPartTitleRef}>{selectedPart?.name ?? 'Pilih bagian sepatu'}</h3>
+              <p className="shoe-part-education-hint">
+                Pilih bagian untuk melihat fungsi, bahan, dan ciri visualnya.
+              </p>
             </div>
 
             {/* Quick Part Chip Selector - Agar pembeli langsung tahu ada bagian apa aja */}
-            <div className="shoe-parts-pill-nav" role="tablist" aria-label="Daftar semua bagian sepatu">
+            <div
+              className="shoe-parts-pill-nav"
+              role="group"
+              aria-label="Daftar semua bagian sepatu"
+              style={{ '--accent': shoe.accent }}
+            >
               {shoe.parts.map((part, index) => {
                 const isCurrent = (selectedPart?.id === part.id || selectedPartId === part.id);
                 return (
@@ -255,7 +363,12 @@ function ShoeEducationFacts({
             </div>
 
             {selectedPart ? (
-              <div className="shoe-part-data-grid">
+              <div
+                key={selectedPart.id}
+                className="shoe-part-data-grid"
+                aria-live="polite"
+                style={{ '--part-accent': shoe.accent }}
+              >
                 <div className="shoe-part-data-item">
                   <span className="shoe-data-label">FUNGSI UTAMA</span>
                   <p>{selectedPart.function}</p>
@@ -264,10 +377,13 @@ function ShoeEducationFacts({
                   <span className="shoe-data-label">MATERIAL & BAHAN</span>
                   <p>{selectedPart.material}</p>
                 </div>
-                <div className="shoe-part-data-item">
+                <div className="shoe-part-data-item shoe-part-observation">
                   <span className="shoe-data-label">CIRI KHAS & CARA CEK</span>
                   <p>{selectedPart.description}</p>
                 </div>
+                <p className="shoe-part-source-note">
+                  Bahan dan konstruksi internal dapat berbeda menurut varian; model 3D hanya menunjukkan detail yang tampak.
+                </p>
               </div>
             ) : (
               <p className="shoe-tab-placeholder">
@@ -279,22 +395,26 @@ function ShoeEducationFacts({
 
         {/* Tab 2: Panduan Edukasi 3 Poin */}
         {activeTab === 'guide' && (
-          <div className="shoe-tab-pane is-active" role="tabpanel">
+          <div
+            className="shoe-tab-pane is-active shoe-guide-pane"
+            role="tabpanel"
+            style={{ '--story-accent': shoe.accent }}
+          >
             <div className="shoe-pane-header">
-              <span className="store-eyebrow">CARA MENGENALI KEASLIAN</span>
-              <h3>3 Ciri Khas Siluet {shoe.name}</h3>
+              <span className="store-eyebrow">PANDUAN MENGAMATI DESAIN</span>
+              <h3>Amati siluet {shoe.name}</h3>
             </div>
             {shoe.releaseYear && (
               <div className="shoe-guide-release-note">
-                <span className="shoe-guide-release-badge">SEJARAH RILIS</span>
-                <p>Siluet ini pertama kali dirilis pada tahun <strong>{shoe.releaseYear}</strong> dan menjadi salah satu siluet paling berpengaruh.</p>
+                <span className="shoe-guide-release-badge">TAHUN REFERENSI</span>
+                <p>Tahun yang dicantumkan untuk model ini: <strong>{shoe.releaseYear}</strong>. Tahun referensi bukan bukti keaslian suatu varian.</p>
               </div>
             )}
-            <ol className="shoe-compact-guide-list">
+            <ol className="shoe-compact-guide-list" aria-label={`Panduan mengamati ${shoe.name}`}>
               {shoe.learningGuide.map((step, idx) => (
                 <li key={step.title} className="shoe-compact-guide-item">
                   <span className="shoe-guide-badge">0{idx + 1}</span>
-                  <div>
+                  <div className="shoe-guide-story-card">
                     <strong>{step.title}</strong>
                     <p>{step.description}</p>
                   </div>
@@ -306,13 +426,27 @@ function ShoeEducationFacts({
 
         {/* Tab 3: Spesifikasi */}
         {activeTab === 'specs' && (
-          <div className="shoe-tab-pane is-active" role="tabpanel">
+          <div
+            className="shoe-tab-pane is-active shoe-specs-pane"
+            role="tabpanel"
+            style={{ '--spec-accent': shoe.accent }}
+          >
             <div className="shoe-pane-header">
               <span className="store-eyebrow">TENTANG SILUET</span>
-              <h3>Karakteristik Desain</h3>
+              <h3>Ringkasan produk</h3>
             </div>
             <p className="shoe-specs-intro">{shoe.description}</p>
-            <dl className="shoe-specs-compact-dl">
+            {shoe.specsSourceUrl && (
+              <a
+                className="shoe-spec-source-link"
+                href={shoe.specsSourceUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Referensi lini resmi {shoe.brand} ↗
+              </a>
+            )}
+            <dl className="shoe-specs-compact-dl" aria-label={`Spesifikasi ${shoe.name}`}>
               {shoe.specs.map(([label, val]) => (
                 <div key={label} className="shoe-spec-row">
                   <dt>{label}</dt>

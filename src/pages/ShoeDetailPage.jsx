@@ -4,7 +4,7 @@ import ShoeEducationFacts from '../components/ShoeEducationFacts';
 import './ShoeStore.css';
 import { shoes } from '../data/products';
 
-function ShoeDetailPage({ shoe, onBack, onCompare, onAddToCart }) {
+function ShoeDetailPage({ shoe, onBack, onCompare, onAddToCart, onBuyNow }) {
   const [selectedPartId, setSelectedPartId] = useState(shoe.parts[0]?.id ?? null);
   const [selectedColor, setSelectedColor] = useState(() => shoe.modelColors?.[0] ?? null);
   const selectedPart = shoe.parts.find((part) => part.id === selectedPartId);
@@ -13,6 +13,7 @@ function ShoeDetailPage({ shoe, onBack, onCompare, onAddToCart }) {
   const layoutRef = useRef(null);
   const viewerRef = useRef(null);
   const infoCardRef = useRef(null);
+  const selectedPartTitleRef = useRef(null);
   const [connector, setConnector] = useState(null);
 
   useEffect(() => {
@@ -36,21 +37,21 @@ function ShoeDetailPage({ shoe, onBack, onCompare, onAddToCart }) {
         const hotspot = [...viewer.children].find(
           (element) => element.slot === `hotspot-${selectedPartId}`,
         );
-        if (!hotspot) {
+        const selectedPartTitle = selectedPartTitleRef.current;
+        if (!hotspot || !selectedPartTitle) {
           setConnector(null);
           return;
         }
 
         const hotspotMarker = hotspot.querySelector('.product-hotspot-dot') ?? hotspot;
         const hotspotBounds = hotspotMarker.getBoundingClientRect();
-        const cardBounds = infoCard.getBoundingClientRect();
+        const titleBounds = selectedPartTitle.getBoundingClientRect();
         const layoutBounds = layout.getBoundingClientRect();
         if (
           hotspotBounds.width === 0 ||
           hotspotBounds.height === 0 ||
-          hotspot.dataset.visible === 'false' ||
-          hotspot.getAttribute('data-visible') === 'false' ||
-          (() => { try { const op = window.getComputedStyle(hotspot).opacity; return op && parseFloat(op) < 0.1; } catch { return false; } })()
+          titleBounds.width === 0 ||
+          titleBounds.height === 0
         ) {
           setConnector(null);
           return;
@@ -59,8 +60,8 @@ function ShoeDetailPage({ shoe, onBack, onCompare, onAddToCart }) {
         setConnector({
           startX: hotspotBounds.left + hotspotBounds.width / 2 - layoutBounds.left,
           startY: hotspotBounds.top + hotspotBounds.height / 2 - layoutBounds.top,
-          endX: cardBounds.left - layoutBounds.left,
-          endY: cardBounds.top + 34 - layoutBounds.top,
+          endX: titleBounds.left - layoutBounds.left,
+          endY: titleBounds.top + titleBounds.height / 2 - layoutBounds.top,
         });
       });
     };
@@ -73,6 +74,8 @@ function ShoeDetailPage({ shoe, onBack, onCompare, onAddToCart }) {
     const resizeObserver = new ResizeObserver(updateConnector);
     resizeObserver.observe(layout);
     resizeObserver.observe(infoCard);
+    const contentObserver = new MutationObserver(updateConnector);
+    contentObserver.observe(infoCard, { childList: true, subtree: true });
 
     return () => {
       cancelAnimationFrame(animationFrame);
@@ -81,11 +84,16 @@ function ShoeDetailPage({ shoe, onBack, onCompare, onAddToCart }) {
       window.removeEventListener('resize', updateConnector);
       window.removeEventListener('scroll', updateConnector, true);
       resizeObserver.disconnect();
+      contentObserver.disconnect();
     };
   }, [selectedPartId, shoe.id]);
 
   const brandName = shoe.brand || (shoe.name.toUpperCase().startsWith('PUMA') ? 'PUMA' : 'NIKE');
   const brandInitial = brandName[0];
+  const connectorCurve = connector ? Math.min((connector.endX - connector.startX) * 0.45, 120) : 0;
+  const connectorPath = connector
+    ? `M ${connector.startX} ${connector.startY} C ${connector.startX + connectorCurve} ${connector.startY}, ${connector.endX - connectorCurve} ${connector.endY}, ${connector.endX} ${connector.endY}`
+    : '';
 
   return (
     <main className="shoe-store shoe-detail-page">
@@ -100,11 +108,15 @@ function ShoeDetailPage({ shoe, onBack, onCompare, onAddToCart }) {
 
       <section className="shoe-detail-layout" ref={layoutRef}>
         {connector && (
-          <svg className="shoe-education-connector" aria-hidden="true">
-            <path
-              d={`M ${connector.startX} ${connector.startY} C ${connector.startX + 48} ${connector.startY}, ${connector.endX - 48} ${connector.endY}, ${connector.endX} ${connector.endY}`}
-            />
-            <circle cx={connector.startX} cy={connector.startY} r="4" />
+          <svg
+            className="shoe-education-connector"
+            style={{ '--shoe-accent': shoe.accent }}
+            aria-hidden="true"
+          >
+            <path className="shoe-education-connector-outline" d={connectorPath} />
+            <path className="shoe-education-connector-line" d={connectorPath} />
+            <circle className="shoe-education-connector-start" cx={connector.startX} cy={connector.startY} r="5" />
+            <circle className="shoe-education-connector-end" cx={connector.endX} cy={connector.endY} r="4" />
           </svg>
         )}
         <div className="shoe-viewer-column">
@@ -167,7 +179,9 @@ function ShoeDetailPage({ shoe, onBack, onCompare, onAddToCart }) {
             selectedPartId={selectedPartId}
             onSelectPart={setSelectedPartId}
             onAddToCart={onAddToCart}
+            onBuyNow={onBuyNow}
             infoCardRef={infoCardRef}
+            selectedPartTitleRef={selectedPartTitleRef}
           />
         </div>
       </section>
