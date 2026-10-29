@@ -5675,3 +5675,772 @@
     height: 230px;
   }
 }
+
+/* ==========================================================================
+   INTERACTIVE PAYMENT METHODS (QRIS, BANK VA, E-WALLET)
+   ========================================================================== */
+.payment-category-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.55rem;
+  margin: 1.1rem 0;
+}
+
+.payment-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem 0.85rem;
+  border: 1.5px solid rgba(21, 23, 19, 0.14);
+  border-radius: 11px;
+  background: #ffffff;
+  color: #1e293b;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.payment-tab-btn:hover {
+  border-color: rgba(21, 23, 19, 0.35);
+  background: #faf9f5;
+}
+
+.payment-tab-btn.is-active {
+  border-color: #0f172a;
+  background: #0f172a;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.15);
+}
+
+.payment-tab-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.payment-tab-info strong {
+  display: block;
+  font-size: 0.73rem;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.12rem;
+}
+
+.payment-tab-info small {
+  display: block;
+  font-size: 0.61rem;
+  opacity: 0.7;
+}
+
+.payment-tab-btn.is-active .payment-tab-info small {
+  color: #cbd5e1;
+  opacity: 0.85;
+}
+
+.payment-sub-heading {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.6rem;
+}
+
+/* ==========================================================================
+   TAB 1: QRIS CARD & BARCODE
+   ========================================================================== */
+.payment-panel-qris {
+  animation: fadeInPayment 0.2s ease-out;
+}
+
+@keyframes fadeInPayment {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.payment-qris-card {
+  padding: 1.2rem;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1.5px solid rgba(21, 23, 19, 0.16);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  text-align: center;
+}
+
+.payment-qris-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.85rem;
+  margin-bottom: 0.95rem;
+  border-bottom: 1px solid rgba(21, 23, 19, 0.1);
+}
+
+.payment-qris-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.payment-qris-logo-tag {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 5px;
+  background: #dc2626;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+}
+
+.payment-qris-sub-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.payment-qris-verified-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.payment-qris-barcode-wrapper {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  margin: 0 auto 1.1rem;
+  padding: 10px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 2px solid #0f172a;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.payment-qris-barcode-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 6px;
+  display: block;
+}
+
+.payment-qris-scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #ef4444, #facc15, transparent);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
+  animation: scanLine 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes scanLine {
+  0% { top: 10px; opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { top: 210px; opacity: 0; }
+}
+
+.payment-qris-amount-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 10px;
+  background: #faf9f5;
+  border: 1px solid rgba(21, 23, 19, 0.1);
+}
+
+.payment-qris-amount-row span {
+  font-size: 0.74rem;
+  color: #64748b;
+}
+
+.payment-qris-amount-row strong {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.payment-qris-actions {
+  display: grid;
+  gap: 0.55rem;
+  margin-bottom: 1.1rem;
+}
+
+.payment-btn-open-app {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  background: #118eea;
+  color: #ffffff;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(17, 142, 234, 0.3);
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.payment-btn-open-app:hover {
+  background: #0d7acc;
+  transform: translateY(-1px);
+}
+
+.payment-btn-copy-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  width: 100%;
+  padding: 0.68rem 1rem;
+  border-radius: 9px;
+  border: 1px solid rgba(21, 23, 19, 0.2);
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.payment-btn-copy-link:hover {
+  background: #f1f5f9;
+}
+
+.payment-qris-supported {
+  padding: 0.75rem 0 0.85rem;
+  border-top: 1px dashed rgba(21, 23, 19, 0.14);
+  border-bottom: 1px dashed rgba(21, 23, 19, 0.14);
+  margin-bottom: 0.95rem;
+}
+
+.payment-qris-support-title {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 0.55rem;
+}
+
+.payment-qris-badges-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.pay-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 0.18rem 0.48rem;
+  border-radius: 5px;
+  border: 1px solid rgba(21, 23, 19, 0.12);
+  background: #f8fafc;
+  color: #334155;
+}
+
+.pay-badge-dana { background: #e0f2fe; color: #0284c7; border-color: #bae6fd; font-weight: 800; }
+.pay-badge-gopay { background: #dcfce7; color: #16a34a; border-color: #bbf7d0; }
+.pay-badge-ovo { background: #f3e8ff; color: #7e22ce; border-color: #e9d5ff; }
+.pay-badge-shopee { background: #ffedd5; color: #ea580c; border-color: #fed7aa; }
+.pay-badge-bca { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+.pay-badge-mandiri { background: #fef9c3; color: #a16207; border-color: #fde047; }
+.pay-badge-bri { background: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
+.pay-badge-bni { background: #fed7aa; color: #c2410c; border-color: #fdba74; }
+
+.payment-qris-steps {
+  text-align: left;
+  font-size: 0.65rem;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.payment-qris-steps ol {
+  margin: 0;
+  padding-left: 1.15rem;
+}
+
+.payment-qris-steps li {
+  margin-bottom: 0.35rem;
+}
+
+/* ==========================================================================
+   TAB 2: VIRTUAL ACCOUNT (BANK SELECTION & CARD)
+   ========================================================================== */
+.payment-panel-va {
+  animation: fadeInPayment 0.2s ease-out;
+}
+
+.payment-bank-selector {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  padding-bottom: 0.55rem;
+  margin-bottom: 0.85rem;
+}
+
+.payment-bank-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0.55rem 0.8rem;
+  border: 1.5px solid rgba(21, 23, 19, 0.15);
+  border-radius: 9px;
+  background: #ffffff;
+  color: #1e293b;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.payment-bank-btn:hover {
+  background: #faf9f5;
+  border-color: rgba(21, 23, 19, 0.35);
+}
+
+.payment-bank-btn.is-active {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+
+.payment-bank-btn-name {
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.payment-bank-btn-code {
+  font-size: 0.58rem;
+  opacity: 0.65;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.payment-va-details-card {
+  padding: 1.1rem;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1.5px solid rgba(21, 23, 19, 0.16);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+}
+
+.payment-va-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 0.95rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(21, 23, 19, 0.1);
+}
+
+.payment-va-bank-badge {
+  display: inline-block;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  background: #e2e8f0;
+  color: #334155;
+  margin-bottom: 0.25rem;
+}
+
+.payment-va-header h4 {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #0f172a;
+}
+
+.payment-va-verify-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #15803d;
+  white-space: nowrap;
+}
+
+.payment-va-number-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.95rem 1rem;
+  border-radius: 11px;
+  background: #0f172a;
+  color: #ffffff;
+  margin-bottom: 0.85rem;
+}
+
+.payment-va-number-content small {
+  display: block;
+  font-size: 0.62rem;
+  color: #94a3b8;
+  margin-bottom: 0.2rem;
+}
+
+.payment-va-number-text {
+  display: block;
+  font-size: 1.05rem;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.06em;
+  color: #facc15;
+  margin-bottom: 0.2rem;
+}
+
+.payment-va-holder {
+  display: block;
+  font-size: 0.64rem;
+  color: #cbd5e1;
+}
+
+.payment-va-copy-btn {
+  padding: 0.55rem 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.payment-va-copy-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.payment-va-amount-box {
+  padding: 0.75rem 1rem;
+  border-radius: 9px;
+  background: #faf9f5;
+  border: 1px solid rgba(21, 23, 19, 0.1);
+  margin-bottom: 0.95rem;
+}
+
+.payment-va-amount-box > span {
+  display: block;
+  font-size: 0.65rem;
+  color: #64748b;
+  margin-bottom: 0.2rem;
+}
+
+.payment-va-amount-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.payment-va-amount-val {
+  font-size: 0.95rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: #0f172a;
+}
+
+.payment-amount-copy-btn {
+  padding: 0.25rem 0.55rem;
+  border: 1px solid rgba(21, 23, 19, 0.2);
+  border-radius: 6px;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 0.63rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.payment-va-guide {
+  font-size: 0.66rem;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.payment-va-guide-title {
+  display: block;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.4rem;
+}
+
+.payment-va-guide ol {
+  margin: 0;
+  padding-left: 1.15rem;
+}
+
+.payment-va-guide li {
+  margin-bottom: 0.3rem;
+}
+
+/* ==========================================================================
+   TAB 3: E-WALLET LANGSUNG
+   ========================================================================== */
+.payment-panel-ewallet {
+  animation: fadeInPayment 0.2s ease-out;
+}
+
+.payment-ewallet-selector {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.45rem;
+  margin-bottom: 0.95rem;
+}
+
+.payment-ewallet-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.65rem 0.4rem;
+  border: 1.5px solid rgba(21, 23, 19, 0.15);
+  border-radius: 10px;
+  background: #ffffff;
+  color: #1e293b;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.payment-ewallet-btn:hover {
+  background: #faf9f5;
+  border-color: rgba(21, 23, 19, 0.35);
+}
+
+.payment-ewallet-btn.is-active {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+
+.payment-ewallet-btn strong {
+  font-size: 0.74rem;
+}
+
+.ewallet-badge-pop {
+  font-size: 0.52rem;
+  font-weight: 800;
+  padding: 0.12rem 0.35rem;
+  border-radius: 4px;
+  background: #facc15;
+  color: #0f172a;
+  white-space: nowrap;
+}
+
+.payment-ewallet-card {
+  padding: 1.1rem;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1.5px solid rgba(21, 23, 19, 0.16);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+}
+
+.payment-ewallet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.55rem;
+}
+
+.payment-ewallet-brand {
+  display: inline-block;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  background: #118eea;
+  color: #ffffff;
+  margin-bottom: 0.2rem;
+}
+
+.payment-ewallet-head h4 {
+  margin: 0;
+  font-size: 0.84rem;
+}
+
+.payment-ewallet-fee {
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.payment-ewallet-desc {
+  margin: 0 0 0.85rem;
+  font-size: 0.68rem;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+.payment-ewallet-number-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.95rem 1rem;
+  border-radius: 11px;
+  background: #0f172a;
+  color: #ffffff;
+  margin-bottom: 0.85rem;
+}
+
+.payment-ewallet-number-box small {
+  display: block;
+  font-size: 0.62rem;
+  color: #94a3b8;
+  margin-bottom: 0.2rem;
+}
+
+.payment-ewallet-num {
+  display: block;
+  font-size: 1.05rem;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.06em;
+  color: #facc15;
+  margin-bottom: 0.2rem;
+}
+
+.payment-ewallet-holder {
+  display: block;
+  font-size: 0.64rem;
+  color: #cbd5e1;
+}
+
+.payment-ewallet-direct-act {
+  margin-bottom: 0.85rem;
+}
+
+/* ==========================================================================
+   TAB 4: KARTU DEBIT / KREDIT
+   ========================================================================== */
+.payment-panel-card {
+  padding: 1.1rem;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1.5px solid rgba(21, 23, 19, 0.16);
+  animation: fadeInPayment 0.2s ease-out;
+}
+
+.payment-card-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid rgba(21, 23, 19, 0.2);
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+}
+
+.payment-card-secure-notice {
+  margin-top: 0.75rem;
+  padding: 0.6rem;
+  border-radius: 8px;
+  background: #faf9f5;
+  font-size: 0.65rem;
+  color: #475569;
+  text-align: center;
+}
+
+/* ==========================================================================
+   RECEIPT VIEW ENRICHMENT (QRIS & VA SUMMARY)
+   ========================================================================== */
+.shopping-cart-receipt-payment-box {
+  padding: 1rem;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid rgba(21, 23, 19, 0.12);
+  margin: 1rem 0;
+  text-align: left;
+}
+
+.shopping-cart-receipt-payment-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.65rem;
+}
+
+.shopping-cart-receipt-method-text {
+  margin: 0 0 0.5rem;
+  font-size: 0.74rem;
+  color: #1e293b;
+}
+
+.shopping-cart-receipt-qris-mini {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem;
+  border-radius: 10px;
+  background: #faf9f5;
+  border: 1px solid rgba(21, 23, 19, 0.1);
+}
+
+.shopping-cart-qris-thumb {
+  width: 65px;
+  height: 65px;
+  border-radius: 8px;
+  border: 1px solid #0f172a;
+  object-fit: contain;
+  background: #ffffff;
+}
+
+.shopping-cart-receipt-qris-mini strong {
+  display: block;
+  font-size: 0.74rem;
+  color: #0f172a;
+  margin-bottom: 0.2rem;
+}
+
+.shopping-cart-receipt-qris-mini small {
+  display: block;
+  font-size: 0.65rem;
+  color: #64748b;
+  line-height: 1.35;
+}
+
+.shopping-cart-receipt-va-info {
+  padding: 0.75rem;
+  border-radius: 10px;
+  background: #faf9f5;
+  border: 1px solid rgba(21, 23, 19, 0.1);
+}
+
+.shopping-cart-receipt-va-info small {
+  display: block;
+  font-size: 0.64rem;
+  color: #64748b;
+}
+
+.shopping-cart-receipt-va-info strong {
+  display: block;
+  font-size: 0.95rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: #0f172a;
+  margin: 0.2rem 0;
+}
+
+@media (max-width: 500px) {
+  .payment-category-tabs {
+    grid-template-columns: 1fr;
+  }
+  .payment-ewallet-selector {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .payment-qris-barcode-wrapper {
+    width: 190px;
+    height: 190px;
+  }
+}

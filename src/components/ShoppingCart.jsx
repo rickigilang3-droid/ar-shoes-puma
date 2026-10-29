@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { formatPrice } from '../data/products';
 import { OFFICIAL_STORES } from '../data/stores';
+import {
+  DANA_QRIS_URL,
+  DANA_QRIS_IMAGE,
+  DANA_PHONE_NUMBER,
+  DANA_ACCOUNT_NAME,
+  BANK_TRANSFER_CHANNELS,
+  EWALLET_CHANNELS,
+} from '../data/paymentMethods';
 import AddressMapModal from './AddressMapModal';
 
 function ShoppingCart({
@@ -26,13 +34,34 @@ function ShoppingCart({
   const [checkoutCustomer, setCheckoutCustomer] = useState(null);
   const [completedOrder, setCompletedOrder] = useState(null);
 
+  // Payment states
+  const [paymentCategory, setPaymentCategory] = useState('qris'); // 'qris' | 'va' | 'ewallet' | 'card'
+  const [selectedBankId, setSelectedBankId] = useState('bca');
+  const [selectedEwalletId, setSelectedEwalletId] = useState('dana');
+  const [copiedNotice, setCopiedNotice] = useState(null);
+
   useEffect(() => {
     if (isOpen) {
       setActiveView(initialView || 'cart');
     }
   }, [isOpen, initialView]);
 
-  const selectedStore = OFFICIAL_STORES.find((store) => store.id === selectedStoreId) || OFFICIAL_STORES[0];
+  const selectedStore =
+    OFFICIAL_STORES.find((store) => store.id === selectedStoreId) || OFFICIAL_STORES[0];
+
+  const selectedBank =
+    BANK_TRANSFER_CHANNELS.find((bank) => bank.id === selectedBankId) || BANK_TRANSFER_CHANNELS[0];
+
+  const selectedEwallet =
+    EWALLET_CHANNELS.find((ew) => ew.id === selectedEwalletId) || EWALLET_CHANNELS[0];
+
+  const copyToClipboard = (text, label) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      setCopiedNotice(label);
+      setTimeout(() => setCopiedNotice(null), 2500);
+    }
+  };
 
   const handleConfirmAddressFromMap = ({ address, coordinates, courierNote }) => {
     setPinnedLocation({ address, coordinates, courierNote });
@@ -82,11 +111,47 @@ function ShoppingCart({
 
   const handlePayment = (event) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+
+    let methodTitle = 'QRIS Instan (DANA)';
+    let paymentDetails = {};
+
+    if (paymentCategory === 'qris') {
+      methodTitle = 'QRIS DANA Instan';
+      paymentDetails = {
+        type: 'qris',
+        qrUrl: DANA_QRIS_URL,
+        qrImage: DANA_QRIS_IMAGE,
+        accountName: DANA_ACCOUNT_NAME,
+      };
+    } else if (paymentCategory === 'va') {
+      methodTitle = `${selectedBank.bankName} Virtual Account (${selectedBank.formattedAccount})`;
+      paymentDetails = {
+        type: 'va',
+        bankName: selectedBank.bankName,
+        bankCode: selectedBank.bankCode,
+        accountNumber: selectedBank.accountNumber,
+        formattedAccount: selectedBank.formattedAccount,
+        accountHolder: selectedBank.accountHolder,
+      };
+    } else if (paymentCategory === 'ewallet') {
+      methodTitle = `E-Wallet ${selectedEwallet.name} (${selectedEwallet.number})`;
+      paymentDetails = {
+        type: 'ewallet',
+        provider: selectedEwallet.name,
+        number: selectedEwallet.number,
+        accountHolder: selectedEwallet.accountHolder,
+      };
+    } else {
+      methodTitle = 'Kartu Kredit / Debit';
+      paymentDetails = { type: 'card' };
+    }
+
     const customer = {
       ...checkoutCustomer,
-      paymentMethod: formData.get('paymentMethod'),
+      paymentMethod: methodTitle,
+      paymentDetails,
     };
+
     const order = onCompleteCheckout(customer);
     setCompletedOrder({ ...order, customerName: customer.name });
     setActiveView('receipt');
@@ -284,26 +349,21 @@ function ShoppingCart({
                 {completedOrder.fulfillmentType === 'pickup' ? (
                   <div className="shopping-cart-receipt-pickup-card">
                     <div className="shopping-cart-pickup-qr-box">
-                      {/* High-tech stylized QR code SVG representation */}
                       <svg
                         className="shopping-cart-pickup-qr-svg"
                         viewBox="0 0 140 140"
                         aria-label="QR Pass Pengambilan"
                       >
                         <rect width="140" height="140" fill="#ffffff" rx="10" />
-                        {/* Finder Pattern Top-Left */}
                         <rect x="12" y="12" width="34" height="34" fill="#0f172a" rx="4" />
                         <rect x="18" y="18" width="22" height="22" fill="#ffffff" rx="2" />
                         <rect x="23" y="23" width="12" height="12" fill="#0f172a" rx="1" />
-                        {/* Finder Pattern Top-Right */}
                         <rect x="94" y="12" width="34" height="34" fill="#0f172a" rx="4" />
                         <rect x="100" y="18" width="22" height="22" fill="#ffffff" rx="2" />
                         <rect x="105" y="23" width="12" height="12" fill="#0f172a" rx="1" />
-                        {/* Finder Pattern Bottom-Left */}
                         <rect x="12" y="94" width="34" height="34" fill="#0f172a" rx="4" />
                         <rect x="18" y="100" width="22" height="22" fill="#ffffff" rx="2" />
                         <rect x="23" y="105" width="12" height="12" fill="#0f172a" rx="1" />
-                        {/* Data matrix dots */}
                         <rect x="54" y="16" width="8" height="8" fill="#0f172a" />
                         <rect x="70" y="16" width="14" height="8" fill="#0f172a" />
                         <rect x="54" y="30" width="14" height="6" fill="#0f172a" />
@@ -370,13 +430,45 @@ function ShoppingCart({
                   </div>
                 )}
 
-                <div className="shopping-cart-receipt-meta">
-                  <p>
-                    Status: <strong className="shopping-cart-paid-status">{completedOrder.status}</strong>
-                  </p>
-                  <p>
+                {/* Payment Channel Card on Receipt */}
+                <div className="shopping-cart-receipt-payment-box">
+                  <div className="shopping-cart-receipt-payment-head">
+                    <span className="shopping-cart-receipt-badge">💳 PEMBAYARAN TERKONFIRMASI</span>
+                    <span className="shopping-cart-paid-status">LUNAS ✓</span>
+                  </div>
+
+                  <p className="shopping-cart-receipt-method-text">
                     Metode: <strong>{completedOrder.paymentMethod}</strong>
                   </p>
+
+                  {completedOrder.paymentDetails?.type === 'qris' && (
+                    <div className="shopping-cart-receipt-qris-mini">
+                      <img
+                        src={DANA_QRIS_IMAGE}
+                        alt="QRIS Barcode"
+                        className="shopping-cart-qris-thumb"
+                      />
+                      <div>
+                        <strong>QRIS DANA Terverifikasi</strong>
+                        <small>Pembayaran berhasil dicatat untuk pesanan ini.</small>
+                      </div>
+                    </div>
+                  )}
+
+                  {completedOrder.paymentDetails?.type === 'va' && (
+                    <div className="shopping-cart-receipt-va-info">
+                      <small>Virtual Account:</small>
+                      <strong>{completedOrder.paymentDetails.formattedAccount}</strong>
+                      <small>a/n {completedOrder.paymentDetails.accountHolder}</small>
+                    </div>
+                  )}
+
+                  {completedOrder.paymentDetails?.type === 'ewallet' && (
+                    <div className="shopping-cart-receipt-va-info">
+                      <small>Nomor E-Wallet {completedOrder.paymentDetails.provider}:</small>
+                      <strong>{completedOrder.paymentDetails.number}</strong>
+                    </div>
+                  )}
                 </div>
 
                 <div className="shopping-cart-receipt-total">
@@ -681,7 +773,7 @@ function ShoppingCart({
                 </button>
               </form>
             ) : activeView === 'payment' ? (
-              /* View: Payment Selection */
+              /* View: Payment Channels (QRIS, Bank VA, E-Wallet, Kartu) */
               <form className="shopping-cart-checkout-form" onSubmit={handlePayment}>
                 <ol className="shopping-cart-progress" aria-label="Tahap checkout">
                   <li className="is-complete">
@@ -730,40 +822,337 @@ function ShoppingCart({
                   )}
                 </div>
 
-                <fieldset className="shopping-cart-payment-methods">
-                  <legend>Pilih Metode Pembayaran</legend>
-                  <label className="shopping-cart-payment-option">
-                    <input type="radio" name="paymentMethod" value="QRIS Instan" defaultChecked required />
-                    <span className="shopping-cart-payment-icon" aria-hidden="true">
-                      ▦
-                    </span>
-                    <span>
+                {/* Payment Category Navigation Tabs */}
+                <div className="payment-category-tabs" role="tablist" aria-label="Pilihan Pembayaran">
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={paymentCategory === 'qris'}
+                    className={`payment-tab-btn ${paymentCategory === 'qris' ? 'is-active' : ''}`}
+                    onClick={() => setPaymentCategory('qris')}
+                  >
+                    <span className="payment-tab-icon">▦</span>
+                    <div className="payment-tab-info">
                       <strong>QRIS Instan</strong>
-                      <small>Scan QR code e-wallet (GoPay, OVO, Dana, ShopeePay)</small>
-                    </span>
-                  </label>
-                  <label className="shopping-cart-payment-option">
-                    <input type="radio" name="paymentMethod" value="BCA Virtual Account" required />
-                    <span className="shopping-cart-payment-icon" aria-hidden="true">
-                      ▤
-                    </span>
-                    <span>
-                      <strong>BCA Virtual Account</strong>
-                      <small>Transfer otomatis via Virtual Account</small>
-                    </span>
-                  </label>
-                  <label className="shopping-cart-payment-option">
-                    <input type="radio" name="paymentMethod" value="Kartu Kredit / Debit" required />
-                    <span className="shopping-cart-payment-icon" aria-hidden="true">
-                      ▣
-                    </span>
-                    <span>
-                      <strong>Kartu Kredit / Debit</strong>
-                      <small>Pembayaran aman Visa / Mastercard / JCB</small>
-                    </span>
-                  </label>
-                </fieldset>
+                      <small>Barcode DANA / Semua Bank</small>
+                    </div>
+                  </button>
 
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={paymentCategory === 'va'}
+                    className={`payment-tab-btn ${paymentCategory === 'va' ? 'is-active' : ''}`}
+                    onClick={() => setPaymentCategory('va')}
+                  >
+                    <span className="payment-tab-icon">🏦</span>
+                    <div className="payment-tab-info">
+                      <strong>Transfer Bank / VA</strong>
+                      <small>BCA, Mandiri, BNI, BRI</small>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={paymentCategory === 'ewallet'}
+                    className={`payment-tab-btn ${paymentCategory === 'ewallet' ? 'is-active' : ''}`}
+                    onClick={() => setPaymentCategory('ewallet')}
+                  >
+                    <span className="payment-tab-icon">📱</span>
+                    <div className="payment-tab-info">
+                      <strong>E-Wallet</strong>
+                      <small>DANA, GoPay, OVO</small>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={paymentCategory === 'card'}
+                    className={`payment-tab-btn ${paymentCategory === 'card' ? 'is-active' : ''}`}
+                    onClick={() => setPaymentCategory('card')}
+                  >
+                    <span className="payment-tab-icon">💳</span>
+                    <div className="payment-tab-info">
+                      <strong>Kartu Debit/Kredit</strong>
+                      <small>Visa / Mastercard</small>
+                    </div>
+                  </button>
+                </div>
+
+                {/* TAB 1: QRIS DANA & ALL PAYMENT */}
+                {paymentCategory === 'qris' && (
+                  <div className="payment-panel-qris">
+                    <div className="payment-qris-card">
+                      <div className="payment-qris-card-header">
+                        <div className="payment-qris-brand">
+                          <span className="payment-qris-logo-tag">QRIS</span>
+                          <span className="payment-qris-sub-tag">DANA INDONESIA</span>
+                        </div>
+                        <span className="payment-qris-verified-badge">✓ Terverifikasi</span>
+                      </div>
+
+                      <div className="payment-qris-barcode-wrapper">
+                        <img
+                          src={DANA_QRIS_IMAGE}
+                          alt="QRIS Barcode Pembayaran DANA"
+                          className="payment-qris-barcode-img"
+                        />
+                        <div className="payment-qris-scan-line" aria-hidden="true" />
+                      </div>
+
+                      <div className="payment-qris-amount-row">
+                        <span>Total Tagihan:</span>
+                        <strong>{formatPrice(subtotal)}</strong>
+                      </div>
+
+                      <div className="payment-qris-actions">
+                        <a
+                          href={DANA_QRIS_URL}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="payment-btn-open-app"
+                        >
+                          📲 Buka di Aplikasi DANA / Bayar Langsung
+                        </a>
+
+                        <button
+                          type="button"
+                          className="payment-btn-copy-link"
+                          onClick={() => copyToClipboard(DANA_QRIS_URL, 'qris-link')}
+                        >
+                          📋 {copiedNotice === 'qris-link' ? 'Link Tersalin! ✓' : 'Salin Link Pembayaran DANA'}
+                        </button>
+                      </div>
+
+                      <div className="payment-qris-supported">
+                        <span className="payment-qris-support-title">Menerima Pembayaran Dari:</span>
+                        <div className="payment-qris-badges-grid">
+                          <span className="pay-badge pay-badge-dana">DANA</span>
+                          <span className="pay-badge pay-badge-gopay">GoPay</span>
+                          <span className="pay-badge pay-badge-ovo">OVO</span>
+                          <span className="pay-badge pay-badge-shopee">ShopeePay</span>
+                          <span className="pay-badge pay-badge-bca">BCA</span>
+                          <span className="pay-badge pay-badge-mandiri">Mandiri</span>
+                          <span className="pay-badge pay-badge-bri">BRI</span>
+                          <span className="pay-badge pay-badge-bni">BNI</span>
+                        </div>
+                      </div>
+
+                      <div className="payment-qris-steps">
+                        <ol>
+                          <li>Buka aplikasi DANA, GoPay, OVO, BCA Mobile, atau m-Banking apa saja.</li>
+                          <li>Pilih menu <strong>Scan / Bayar QR</strong> lalu arahkan kamera ke barcode di atas (atau klik tombol buka DANA).</li>
+                          <li>Pastikan nama penerima <strong>{DANA_ACCOUNT_NAME}</strong> dan konfirmasi nominal pembayaran.</li>
+                        </ol>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 2: VIRTUAL ACCOUNT & BANK TRANSFER */}
+                {paymentCategory === 'va' && (
+                  <div className="payment-panel-va">
+                    <span className="payment-sub-heading">Pilih Bank Tujuan:</span>
+                    <div className="payment-bank-selector" role="radiogroup">
+                      {BANK_TRANSFER_CHANNELS.map((bank) => (
+                        <button
+                          key={bank.id}
+                          type="button"
+                          role="radio"
+                          aria-checked={selectedBankId === bank.id}
+                          className={`payment-bank-btn ${selectedBankId === bank.id ? 'is-active' : ''}`}
+                          onClick={() => setSelectedBankId(bank.id)}
+                        >
+                          <span className="payment-bank-btn-name">{bank.bankName}</span>
+                          <span className="payment-bank-btn-code">Kode: {bank.bankCode}</span>
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="payment-va-details-card">
+                      <div className="payment-va-header">
+                        <div>
+                          <span className="payment-va-bank-badge">{selectedBank.bankName}</span>
+                          <h4>{selectedBank.type}</h4>
+                        </div>
+                        <span className="payment-va-verify-badge">{selectedBank.badge}</span>
+                      </div>
+
+                      <div className="payment-va-number-box">
+                        <div className="payment-va-number-content">
+                          <small>Nomor Virtual Account / Rekening:</small>
+                          <strong className="payment-va-number-text">
+                            {selectedBank.formattedAccount}
+                          </strong>
+                          <span className="payment-va-holder">
+                            a/n <strong>{selectedBank.accountHolder}</strong>
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          className="payment-va-copy-btn"
+                          onClick={() =>
+                            copyToClipboard(selectedBank.accountNumber, `va-${selectedBank.id}`)
+                          }
+                          aria-label={`Salin nomor Virtual Account ${selectedBank.bankName}`}
+                        >
+                          {copiedNotice === `va-${selectedBank.id}` ? 'Tersalin! ✓' : 'Salin Nomor'}
+                        </button>
+                      </div>
+
+                      <div className="payment-va-amount-box">
+                        <span>Jumlah yang Harus Ditransfer:</span>
+                        <div className="payment-va-amount-row">
+                          <strong className="payment-va-amount-val">{formatPrice(subtotal)}</strong>
+                          <button
+                            type="button"
+                            className="payment-amount-copy-btn"
+                            onClick={() => copyToClipboard(String(subtotal), 'nominal')}
+                          >
+                            {copiedNotice === 'nominal' ? 'Tersalin! ✓' : 'Salin Nominal'}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="payment-va-guide">
+                        <span className="payment-va-guide-title">
+                          Panduan Transfer {selectedBank.bankName}:
+                        </span>
+                        <ol>
+                          {selectedBank.instructions.map((step, idx) => (
+                            <li key={idx}>{step}</li>
+                          ))}
+                        </ol>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 3: E-WALLET LANGSUNG */}
+                {paymentCategory === 'ewallet' && (
+                  <div className="payment-panel-ewallet">
+                    <span className="payment-sub-heading">Pilih Aplikasi E-Wallet:</span>
+                    <div className="payment-ewallet-selector" role="radiogroup">
+                      {EWALLET_CHANNELS.map((ew) => (
+                        <button
+                          key={ew.id}
+                          type="button"
+                          role="radio"
+                          aria-checked={selectedEwalletId === ew.id}
+                          className={`payment-ewallet-btn ${selectedEwalletId === ew.id ? 'is-active' : ''}`}
+                          onClick={() => setSelectedEwalletId(ew.id)}
+                        >
+                          <strong>{ew.name}</strong>
+                          {ew.badge && <span className="ewallet-badge-pop">{ew.badge}</span>}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="payment-ewallet-card">
+                      <div className="payment-ewallet-head">
+                        <div>
+                          <span className="payment-ewallet-brand">{selectedEwallet.name}</span>
+                          <h4>Transfer Saldo {selectedEwallet.name}</h4>
+                        </div>
+                        <span className="payment-ewallet-fee">Bebas Biaya Admin</span>
+                      </div>
+
+                      <p className="payment-ewallet-desc">{selectedEwallet.description}</p>
+
+                      <div className="payment-ewallet-number-box">
+                        <div>
+                          <small>Nomor Ponsel / Akun {selectedEwallet.name}:</small>
+                          <strong className="payment-ewallet-num">{selectedEwallet.number}</strong>
+                          <span className="payment-ewallet-holder">
+                            a/n <strong>{selectedEwallet.accountHolder}</strong>
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          className="payment-va-copy-btn"
+                          onClick={() => copyToClipboard(selectedEwallet.number, `ew-${selectedEwallet.id}`)}
+                        >
+                          {copiedNotice === `ew-${selectedEwallet.id}` ? 'Tersalin! ✓' : 'Salin Nomor'}
+                        </button>
+                      </div>
+
+                      {selectedEwallet.id === 'dana' && (
+                        <div className="payment-ewallet-direct-act">
+                          <a
+                            href={DANA_QRIS_URL}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="payment-btn-open-app"
+                          >
+                            📲 Buka Aplikasi DANA Langsung
+                          </a>
+                        </div>
+                      )}
+
+                      <div className="payment-va-amount-box">
+                        <span>Total Nominal Pembayaran:</span>
+                        <strong className="payment-va-amount-val">{formatPrice(subtotal)}</strong>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 4: KARTU KREDIT / DEBIT */}
+                {paymentCategory === 'card' && (
+                  <div className="payment-panel-card">
+                    <label>
+                      <span>Nomor Kartu Debit / Kredit</span>
+                      <input
+                        type="text"
+                        maxLength={19}
+                        placeholder="4111 2222 3333 4444"
+                        required
+                        className="payment-card-input"
+                      />
+                    </label>
+
+                    <div className="shopping-cart-form-grid">
+                      <label>
+                        <span>Masa Berlaku (MM/YY)</span>
+                        <input
+                          type="text"
+                          maxLength={5}
+                          placeholder="MM/YY"
+                          required
+                          className="payment-card-input"
+                        />
+                      </label>
+                      <label>
+                        <span>Kode CVV</span>
+                        <input
+                          type="password"
+                          maxLength={4}
+                          placeholder="123"
+                          required
+                          className="payment-card-input"
+                        />
+                      </label>
+                    </div>
+
+                    <label>
+                      <span>Nama di Kartu</span>
+                      <input
+                        type="text"
+                        placeholder="NAMA LENGKAP"
+                        required
+                        className="payment-card-input"
+                      />
+                    </label>
+
+                    <div className="payment-card-secure-notice">
+                      <span>🔒 Enkripsi Bank End-to-End dengan 3D Secure / OTP</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Sticky Payment Action Footer */}
                 <div className="shopping-cart-payment-footer">
                   <div className="shopping-cart-form-total">
                     <span>Total Pembayaran</span>
@@ -774,6 +1163,7 @@ function ShoppingCart({
                   </button>
                   <small>Pembayaran aman dan terenkripsi SSL 256-bit.</small>
                 </div>
+
                 <button
                   className="shopping-cart-back"
                   type="button"

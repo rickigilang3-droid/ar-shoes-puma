@@ -153,6 +153,7 @@ function App() {
       id: `ORD-${Date.now().toString(36).toUpperCase()}`,
       createdAt: new Date().toISOString(),
       paymentMethod: customer.paymentMethod,
+      paymentDetails: customer.paymentDetails || null,
       fulfillmentType: customer.fulfillmentType || 'delivery',
       customerName: customer.name,
       customerPhone: customer.phone || '',
