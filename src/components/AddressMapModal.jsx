@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+// Fix standard Leaflet default icon paths if needed
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+});
 
 const PRESET_CITIES = [
   { name: 'Jakarta Pusat', lat: -6.1951, lng: 106.8208 },
@@ -7,6 +16,35 @@ const PRESET_CITIES = [
   { name: 'Subang', lat: -6.5683, lng: 107.7585 },
   { name: 'Surabaya', lat: -7.2575, lng: 112.7521 },
 ];
+
+const TILE_LAYERS = {
+  streets: {
+    name: 'Akses Jalan Jelas (OSM)',
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    options: {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors',
+    },
+  },
+  voyager: {
+    name: 'Modern Terang',
+    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    options: {
+      maxZoom: 19,
+      subdomains: 'abcd',
+      attribution: '&copy; OpenStreetMap &copy; CARTO',
+    },
+  },
+  dark: {
+    name: 'Studio Gelap',
+    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+    options: {
+      maxZoom: 19,
+      subdomains: 'abcd',
+      attribution: '&copy; OpenStreetMap &copy; CARTO',
+    },
+  },
+};
 
 function AddressMapModal({
   isOpen,
@@ -18,6 +56,7 @@ function AddressMapModal({
 }) {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
+  const tileLayerRef = useRef(null);
   const abortControllerRef = useRef(null);
 
   const [coords, setCoords] = useState(
@@ -27,6 +66,7 @@ function AddressMapModal({
   );
   const [addressText, setAddressText] = useState(initialAddress || 'Memuat titik lokasi...');
   const [courierNote, setCourierNote] = useState(initialNote || '');
+  const [mapStyle, setMapStyle] = useState('streets'); // Default to 'streets' so all road access is vibrant and visible!
   const [isLocating, setIsLocating] = useState(false);
   const [isResolving, setIsResolving] = useState(false);
   const [isPinHovering, setIsPinHovering] = useState(false);
@@ -35,76 +75,96 @@ function AddressMapModal({
   const [isSearching, setIsSearching] = useState(false);
   const [geoError, setGeoError] = useState(null);
 
-  // Initialize or update Leaflet map when modal is opened
+  // Initialize Leaflet map whenever modal opens; clean up completely when it closes
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+        tileLayerRef.current = null;
+      }
+      return;
+    }
 
     const startLat = coords?.lat ?? -6.1951;
     const startLng = coords?.lng ?? 106.8208;
 
-    let timeoutId = null;
+    if (!mapContainerRef.current) return;
 
-    if (!mapInstanceRef.current && mapContainerRef.current) {
-      const map = L.map(mapContainerRef.current, {
-        center: [startLat, startLng],
-        zoom: 16,
-        zoomControl: false,
-      });
-
-      L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-      // CartoDB Dark Matter tiles for luxury dark studio theme
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19,
-        subdomains: 'abcd',
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noreferrer">CARTO</a>',
-      }).addTo(map);
-
-      map.on('movestart', () => {
-        setIsPinHovering(true);
-      });
-
-      map.on('moveend', () => {
-        setIsPinHovering(false);
-        const center = map.getCenter();
-        const nextCoords = { lat: center.lat, lng: center.lng };
-        setCoords(nextCoords);
-        reverseGeocode(center.lat, center.lng);
-      });
-
-      mapInstanceRef.current = map;
-
-      // Ensure tiles render correctly inside modal
-      timeoutId = setTimeout(() => {
-        map.invalidateSize();
-        // If no initial address was provided, do first reverse geocode
-        if (!initialAddress) {
-          reverseGeocode(startLat, startLng);
-        }
-      }, 250);
-    } else if (mapInstanceRef.current) {
-      timeoutId = setTimeout(() => {
-        mapInstanceRef.current?.invalidateSize();
-      }, 200);
+    // Destroy any stale instance before creating a new one
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.remove();
+      mapInstanceRef.current = null;
+      tileLayerRef.current = null;
     }
 
-    return () => {
-      if (timeoutId) clearTimeout(timeoutId);
-    };
-  }, [isOpen]);
+    const map = L.map(mapContainerRef.current, {
+      center: [startLat, startLng],
+      zoom: 16,
+      zoomControl: false,
+    });
 
-  // Clean up on component unmount
-  useEffect(() => {
+    // Zoom control on top-right
+    L.control.zoom({ position: 'topright' }).addTo(map);
+
+    // Initial Tile Layer: OSM Streets (High visibility of roads & alleys)
+    const layerConfig = TILE_LAYERS[mapStyle] || TILE_LAYERS.streets;
+    const tileLayer = L.tileLayer(layerConfig.url, layerConfig.options).addTo(map);
+    tileLayerRef.current = tileLayer;
+
+    map.on('movestart', () => {
+      setIsPinHovering(true);
+    });
+
+    map.on('moveend', () => {
+      setIsPinHovering(false);
+      const center = map.getCenter();
+      const nextCoords = { lat: center.lat, lng: center.lng };
+      setCoords(nextCoords);
+      reverseGeocode(center.lat, center.lng);
+    });
+
+    mapInstanceRef.current = map;
+
+    // Multiple layout passes to guarantee tiles fill the container as animation completes
+    const t1 = setTimeout(() => {
+      map.invalidateSize();
+      if (!initialAddress) {
+        reverseGeocode(startLat, startLng);
+      }
+    }, 60);
+
+    const t2 = setTimeout(() => {
+      map.invalidateSize();
+    }, 250);
+
+    const t3 = setTimeout(() => {
+      map.invalidateSize();
+    }, 550);
+
     return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
-      }
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
+        tileLayerRef.current = null;
       }
     };
-  }, []);
+  }, [isOpen]);
+
+  // Handle map style / tile layer changes dynamically
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+    if (tileLayerRef.current) {
+      mapInstanceRef.current.removeLayer(tileLayerRef.current);
+    }
+    const layerConfig = TILE_LAYERS[mapStyle] || TILE_LAYERS.streets;
+    const newLayer = L.tileLayer(layerConfig.url, layerConfig.options);
+    newLayer.addTo(mapInstanceRef.current);
+    tileLayerRef.current = newLayer;
+  }, [mapStyle]);
 
   // Sync initial address & note when modal opens
   useEffect(() => {
@@ -149,15 +209,15 @@ function AddressMapModal({
 
       const data = await response.json();
       if (data && data.display_name) {
-        // Construct a clean, concise address if components exist
         const addr = data.address || {};
-        const road = addr.road || addr.pedestrian || addr.suburb || addr.neighbourhood || '';
-        const district = addr.city_district || addr.district || addr.city || addr.county || '';
+        const road = addr.road || addr.pedestrian || addr.suburb || addr.neighbourhood || addr.village || '';
+        const district = addr.city_district || addr.district || addr.subdistrict || addr.county || '';
         const city = addr.city || addr.town || addr.municipality || addr.state || '';
         const postcode = addr.postcode ? ` ${addr.postcode}` : '';
 
-        const shortName = [road, district, city].filter(Boolean).join(', ');
-        setAddressText(shortName ? `${shortName}${postcode}` : data.display_name);
+        const shortParts = [road, district, city].filter(Boolean);
+        const readableAddress = shortParts.length > 0 ? `${shortParts.join(', ')}${postcode}` : data.display_name;
+        setAddressText(readableAddress);
       } else {
         setAddressText(`Titik Terpilih (${lat.toFixed(5)}, ${lng.toFixed(5)})`);
       }
@@ -194,7 +254,7 @@ function AddressMapModal({
       const results = await response.json();
 
       if (results.length === 0) {
-        setGeoError('Lokasi tidak ditemukan. Coba ketik nama jalan atau area yang lebih spesifik.');
+        setGeoError('Lokasi tidak ditemukan. Coba ketik nama jalan, gedung, atau area yang lebih spesifik.');
       } else {
         setSearchResults(results);
       }
@@ -224,7 +284,7 @@ function AddressMapModal({
   // Detect GPS location from device
   const handleDetectGPS = () => {
     if (!navigator.geolocation) {
-      setGeoError('Fitur GPS tidak didukung di peramban ini.');
+      setGeoError('Fitur GPS tidak didukung di browser ini.');
       return;
     }
 
@@ -245,7 +305,7 @@ function AddressMapModal({
       (error) => {
         setIsLocating(false);
         if (error.code === 1) {
-          setGeoError('Izin akses lokasi ditolak. Silakan geser peta secara manual.');
+          setGeoError('Izin akses lokasi belum diizinkan. Silakan geser peta secara manual.');
         } else {
           setGeoError('Gagal mendeteksi lokasi saat ini. Silakan gunakan kotak pencarian.');
         }
@@ -302,7 +362,7 @@ function AddressMapModal({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari jalan, gedung, mall, atau area..."
+              placeholder="Cari jalan, gedung, perumahan, atau area..."
               className="address-modal-search-input"
             />
             {searchQuery && (
@@ -357,19 +417,49 @@ function AddressMapModal({
           </ul>
         )}
 
-        {/* Preset City Pills */}
-        <div className="address-modal-presets">
-          <span className="address-modal-preset-label">Pilihan Cepat:</span>
-          {PRESET_CITIES.map((city) => (
+        {/* Preset City & Layer Style Row */}
+        <div className="address-modal-toolbar-row">
+          <div className="address-modal-presets">
+            <span className="address-modal-preset-label">Kota Cepat:</span>
+            {PRESET_CITIES.map((city) => (
+              <button
+                key={city.name}
+                type="button"
+                className="address-modal-preset-pill"
+                onClick={() => handleSelectPreset(city)}
+              >
+                {city.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Map Layer Switcher */}
+          <div className="address-modal-layer-toggles" role="group" aria-label="Pilihan Tampilan Peta">
             <button
-              key={city.name}
               type="button"
-              className="address-modal-preset-pill"
-              onClick={() => handleSelectPreset(city)}
+              className={`address-modal-layer-btn ${mapStyle === 'streets' ? 'is-active' : ''}`}
+              onClick={() => setMapStyle('streets')}
+              title="Peta dengan jalan dan gang sangat jelas"
             >
-              {city.name}
+              🗺️ Jalan Jelas
             </button>
-          ))}
+            <button
+              type="button"
+              className={`address-modal-layer-btn ${mapStyle === 'voyager' ? 'is-active' : ''}`}
+              onClick={() => setMapStyle('voyager')}
+              title="Peta modern bersih"
+            >
+              🏙️ Modern
+            </button>
+            <button
+              type="button"
+              className={`address-modal-layer-btn ${mapStyle === 'dark' ? 'is-active' : ''}`}
+              onClick={() => setMapStyle('dark')}
+              title="Peta tema gelap"
+            >
+              🌙 Studio Gelap
+            </button>
+          </div>
         </div>
 
         {/* Error / Alert notice if any */}
@@ -390,16 +480,18 @@ function AddressMapModal({
             aria-hidden="true"
           >
             <div className="address-modal-pin-bubble">
-              <span>{isResolving ? 'Mencari...' : 'Geser untuk mengatur titik'}</span>
+              <span>{isResolving ? 'Membaca titik...' : 'Geser untuk mengatur titik'}</span>
             </div>
             <div className="address-modal-pin-marker">
               <svg viewBox="0 0 38 52" fill="none" className="address-modal-pin-svg">
                 <path
                   d="M19 0C8.50659 0 0 8.50659 0 19C0 32.8 19 52 19 52C19 52 38 32.8 38 19C38 8.50659 29.4934 0 19 0Z"
-                  fill="#FACC15"
+                  fill="#E11D48"
+                  stroke="#FFFFFF"
+                  strokeWidth="2"
                 />
-                <circle cx="19" cy="19" r="8" fill="#0F172A" />
-                <circle cx="19" cy="19" r="4" fill="#FACC15" />
+                <circle cx="19" cy="19" r="8" fill="#FFFFFF" />
+                <circle cx="19" cy="19" r="4.5" fill="#0F172A" />
               </svg>
               <div className="address-modal-pin-pulse" />
             </div>
@@ -413,15 +505,15 @@ function AddressMapModal({
               {isResolving ? 'Memperbarui...' : 'TITIK TERPILIH'}
             </span>
             <span className="address-modal-coords-pill">
-              {coords?.lat?.toFixed(4)}, {coords?.lng?.toFixed(4)}
+              {coords?.lat?.toFixed(5)}, {coords?.lng?.toFixed(5)}
             </span>
           </div>
 
           <div className="address-modal-selected-content">
-            <span className="address-modal-selected-icon">📌</span>
+            <span className="address-modal-selected-icon">📍</span>
             <div className="address-modal-selected-text">
               <h4>{addressText}</h4>
-              <p>Geser peta atau zoom in/out untuk mengunci letak pintu gerbang atau bangunan secara presisi.</p>
+              <p>Geser peta atau perbesar (zoom in) untuk mengunci titik gerbang, jalan masuk, atau nomor rumah dengan presisi.</p>
             </div>
           </div>
 
@@ -436,7 +528,7 @@ function AddressMapModal({
               maxLength={120}
               value={courierNote}
               onChange={(e) => setCourierNote(e.target.value)}
-              placeholder="Cth: Pagar abu-abu / Blok B-12 / Sebelah minimarket"
+              placeholder="Cth: Pagar abu-abu / Blok B-12 / Masuk gang sebelah toko"
               className="address-modal-note-input"
             />
           </div>

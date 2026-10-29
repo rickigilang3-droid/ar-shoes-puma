@@ -5364,38 +5364,79 @@
   line-height: 1.35;
 }
 
-/* Preset cities */
-.address-modal-presets {
+/* Preset cities & layer toggles toolbar */
+.address-modal-toolbar-row {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  justify-content: space-between;
+  gap: 0.6rem;
   padding: 0 1.2rem 0.65rem;
   overflow-x: auto;
   flex-shrink: 0;
 }
 
+.address-modal-presets {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
 .address-modal-preset-label {
   font-size: 0.62rem;
-  color: #64748b;
+  color: #94a3b8;
   white-space: nowrap;
 }
 
 .address-modal-preset-pill {
-  padding: 0.22rem 0.55rem;
+  padding: 0.2rem 0.5rem;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
   color: #cbd5e1;
-  font-size: 0.64rem;
+  font-size: 0.63rem;
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.15s;
 }
 
 .address-modal-preset-pill:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.address-modal-layer-toggles {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.address-modal-layer-btn {
+  padding: 0.22rem 0.55rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
+  font-size: 0.62rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.address-modal-layer-btn:hover {
   background: rgba(255, 255, 255, 0.15);
   color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.address-modal-layer-btn.is-active {
+  background: #facc15;
+  color: #0f172a;
+  border-color: #facc15;
+  box-shadow: 0 2px 8px rgba(250, 204, 21, 0.3);
 }
 
 .address-modal-alert {
@@ -5408,19 +5449,23 @@
   font-size: 0.66rem;
 }
 
-/* Map Wrapper & Viewport */
+/* Map Wrapper & Viewport - Light neutral base so map tiles are immediately visible */
 .address-modal-map-wrapper {
   position: relative;
   width: 100%;
-  height: 280px;
-  background: #020617;
+  height: 350px;
+  min-height: 320px;
+  background: #e2e8f0;
   overflow: hidden;
 }
 
 .address-modal-map-viewport {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   outline: none;
+  z-index: 1;
 }
 
 /* Override Leaflet tile attribution styling to fit dark studio theme */
