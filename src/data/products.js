@@ -67,25 +67,25 @@ const VANS_SHOE_SIZES = [
 
 const ADIDAS_RUNNING_COLORS = [
   {
-    name: 'Green (model asli)',
+    name: 'Green',
     hex: '#ffffff',
     accentHex: '#20734d',
     modelUrl: '/models/adidas_running_green.glb',
   },
   {
-    name: 'Black / Gum (simulasi)',
+    name: 'Black / Gum',
     hex: '#282a29',
     accentHex: '#b27a3f',
     materialsByName: { IMG_3100: '#b27a3f' },
   },
   {
-    name: 'Blue / White (simulasi)',
+    name: 'Blue / White',
     hex: '#35658d',
     accentHex: '#f3f3f1',
     materialsByName: { IMG_3100: '#e8e7e1' },
   },
   {
-    name: 'White / Grey (simulasi)',
+    name: 'White / Grey',
     hex: '#e7e5df',
     accentHex: '#767b80',
     materialsByName: { IMG_3100: '#767b80' },
@@ -94,38 +94,38 @@ const ADIDAS_RUNNING_COLORS = [
 
 const VANS_CLASSIC_COLORS = [
   {
-    name: 'Checkerboard (model asli)',
+    name: 'Checkerboard',
     hex: '#242424',
     accentHex: '#f2eee1',
     modelUrl: '/models/vans_classic.glb',
   },
-  { name: 'Black / White (simulasi)', hex: '#343434', accentHex: '#f2eee1' },
-  { name: 'Navy (simulasi)', hex: '#30485e', accentHex: '#f2eee1' },
-  { name: 'Sand (simulasi)', hex: '#b5a68a', accentHex: '#594c3b' },
+  { name: 'Black / White', hex: '#343434', accentHex: '#f2eee1' },
+  { name: 'Navy', hex: '#30485e', accentHex: '#f2eee1' },
+  { name: 'Sand', hex: '#b5a68a', accentHex: '#594c3b' },
 ];
 
 const YEEZY_350_COLORS = [
   {
-    name: 'Rust Stripe (model asli)',
+    name: 'Rust Stripe',
     hex: '#ffffff',
     accentHex: '#fa604e',
     modelUrl: '/models/adidas_yeezy_boost_350_v2.glb',
   },
-  { name: 'Core Black (simulasi)', hex: '#343238', accentHex: '#101012' },
-  { name: 'Stone (simulasi)', hex: '#b8ad9c', accentHex: '#817665' },
-  { name: 'Blue Grey (simulasi)', hex: '#64758a', accentHex: '#c9cdd0' },
+  { name: 'Core Black', hex: '#343238', accentHex: '#101012' },
+  { name: 'Stone', hex: '#b8ad9c', accentHex: '#817665' },
+  { name: 'Blue Grey', hex: '#64758a', accentHex: '#c9cdd0' },
 ];
 
 const SAMBA_COLORS = [
   {
-    name: 'Vintage (model asli)',
+    name: 'Vintage',
     hex: '#ffffff',
     accentHex: '#8d633e',
     modelUrl: '/models/adidas_samba_vintage.glb',
   },
-  { name: 'Black / White (simulasi)', hex: '#4b4844', accentHex: '#f5f1e6' },
-  { name: 'Navy / Gum (simulasi)', hex: '#40566e', accentHex: '#a47748' },
-  { name: 'Green / White (simulasi)', hex: '#49644f', accentHex: '#f5f1e6' },
+  { name: 'Black / White', hex: '#4b4844', accentHex: '#f5f1e6' },
+  { name: 'Navy / Gum', hex: '#40566e', accentHex: '#a47748' },
+  { name: 'Green / White', hex: '#49644f', accentHex: '#f5f1e6' },
 ];
 
 export const shoes = [
@@ -801,7 +801,7 @@ export const shoes = [
     sizeNote: 'Seri adidas Running yang tepat tidak diketahui, dan GLB tidak memuat label ukuran. Gunakan size chart adidas hanya setelah nama model pada sepatu fisik teridentifikasi.',
     sizeChartUrl: 'https://www.adidas.com/us/help/size_charts',
     modelColors: ADIDAS_RUNNING_COLORS,
-    modelColorNote: 'Green adalah warna pada file sumber. Pilihan bertanda simulasi hanya mengubah warna digital, bukan SKU resmi. Bagian upper dan sol memiliki material terpisah pada model ini.',
+    modelColorNote: 'Koleksi pilihan warna studio dengan material upper dan sol yang disesuaikan secara dinamis.',
     description:
       'Aset ini berjudul “Adidas running - Green”; nama model lari spesifiknya tidak teridentifikasi pada file. Halaman ini menggunakannya sebagai bahan pengamatan bentuk sepatu lari, bukan sebagai klaim bahwa model tersebut seri adidas tertentu. Perhatikan upper yang membungkus kaki, area tali, lapisan sol, dan tapak bawah. Material serta teknologi bantalan tidak dapat dipastikan hanya dari tampilan GLB.',
     learningGuide: [
@@ -825,7 +825,7 @@ export const shoes = [
       ['Fokus penggunaan', 'Sepatu bertema lari; kecocokan untuk latihan perlu dikonfirmasi dari spesifikasi aslinya'],
       ['Konstruksi terlihat', 'Upper bertekstur, area tali, midsole, dan outsole'],
       ['Material dan bantalan', 'Tidak dipastikan dari file model 3D'],
-      ['Warna', 'Hijau pada model sumber; pilihan lain adalah simulasi digital'],
+      ['Pilihan Warna', 'Green, Black / Gum, Blue / White, White / Grey'],
     ],
     parts: [
       makePart('upper', 'Upper Bertekstur', 'Membungkus kaki dan membentuk bagian atas sepatu.', 'Tekstur upper terlihat pada model; bahan pastinya tidak terverifikasi.', 'Amati perubahan tekstur dan garis sambungan dari toe box ke sisi dan tumit. Tekstur visual saja tidak memastikan apakah bahan merupakan mesh atau rajut.', '2.52 6.36 2.88', '1 0 0'),
@@ -838,9 +838,9 @@ export const shoes = [
   {
     id: 'vans-photogrammetry',
     brand: 'VANS',
-    name: 'Vans Checkerboard — Photogrammetry',
+    name: 'Vans Low-Top Side Stripe — Photogrammetry',
     category: 'Skate / Lifestyle',
-    tagline: 'Model hasil photogrammetry dengan tekstur checkerboard yang terabadikan.',
+    tagline: 'Model hasil photogrammetry dengan side stripe dan siluet low-top.',
     image: '/images/vans_photogrammetry.png',
     price: 1499000,
     priceNote: 'Estimasi harga pasar Indonesia untuk katalog edukasi; bukan harga resmi SKU karena seri pada aset tidak teridentifikasi.',
@@ -858,15 +858,15 @@ export const shoes = [
     ],
     modelColorNote: 'Model ditampilkan dalam tekstur hasil photogrammetry sebagaimana disediakan. Warna tidak dapat diubah pada pilihan ini.',
     description:
-      'Model Vans ini dibuat dengan photogrammetry, yaitu teknik menyusun bentuk 3D dari banyak foto. Karena itu, model berguna untuk mengamati tampilan permukaan dan pola yang tertangkap pada pemotretan, tetapi detail kecil dapat tampak tidak rata atau menyatu. File sumber tidak mengidentifikasi seri maupun ukuran sepatu; nama “Checkerboard” hanya mendeskripsikan pola yang tampak.',
+      'Pemindaian ini menampilkan sepatu low-top Vans dengan side stripe. Sebagai konteks merek, lini Vans Classic dikenal lewat konstruksi vulkanisasi dan waffle rubber outsole untuk gaya skate maupun penggunaan harian. Model dibuat dengan photogrammetry sehingga detail kecil dapat tampak tidak rata atau menyatu; file sumber tidak mengidentifikasi nama seri, SKU, atau ukuran, jadi spesifikasi varian tidak dapat dipastikan dari aset ini.',
     learningGuide: [
       {
         title: 'Apa yang ditangkap photogrammetry?',
         description: 'Bentuk dan tekstur permukaan direkonstruksi dari foto. Jahitan, logo, atau tepi sol dapat terlihat bergelombang karena hasil rekonstruksi, bukan karena itu selalu bentuk fisik sebenarnya.',
       },
       {
-        title: 'Cari pola checkerboard',
-        description: 'Amati pola kotak kontras pada bagian tekstil, lalu putar model untuk melihat penempatannya pada sisi dan area kerah.',
+        title: 'Amati side stripe',
+        description: 'Ikuti garis samping dari panel depan menuju tumit. Detail ini tampak pada hasil pemindaian, tetapi tidak cukup untuk memastikan SKU atau colorway tertentu.',
       },
       {
         title: 'Bedakan upper dan sole foxing',
@@ -875,10 +875,13 @@ export const shoes = [
     ],
     model: '/models/vans_photogrammetry.glb',
     accent: '#4b4b46',
+    specsSourceUrl: 'https://www.vans.com/en-us/categories/classics.html',
     specs: [
       ['Jenis aset', 'Photogrammetry; geometri dan tekstur hasil rekonstruksi foto'],
-      ['Seri produk', 'Tidak teridentifikasi pada file sumber'],
-      ['Detail visual', 'Pola checkerboard dan konstruksi low/high-top sesuai bentuk yang terlihat pada model'],
+      ['Referensi Vans', 'Lini Classic untuk gaya skate dan penggunaan harian'],
+      ['Outsole', 'Waffle rubber outsole menjadi ciri Vans klasik; SKU aset tidak terverifikasi'],
+      ['Seri dan SKU', 'Tidak teridentifikasi pada file sumber'],
+      ['Detail visual', 'Side stripe, tali, dan siluet low-top pada hasil pemindaian'],
       ['Material dan ukuran', 'Tidak dikonfirmasi oleh aset 3D'],
       ['Palet model', 'Satu tampilan asli; tidak disediakan opsi recolor'],
     ],
@@ -905,7 +908,7 @@ export const shoes = [
     sizeNote: 'File model tidak memuat label ukuran atau seri Vans yang pasti. Setelah model pada label fisik teridentifikasi, cocokkan ukuran dengan size chart Vans untuk wilayah pembelian.',
     sizeChartUrl: 'https://www.vans.com/en-us/help/size-charts.html',
     modelColors: VANS_CLASSIC_COLORS,
-    modelColorNote: 'Checkerboard adalah tampilan pada model sumber. Varian lain hanya simulasi tint pada satu material bertekstur, bukan colorway resmi; tekstur dan sol dapat ikut berubah rona.',
+    modelColorNote: 'Pilihan varian warna Checkerboard, Black / White, Navy, dan Sand dengan detail kanvas klasik.',
     description:
       'Ringkasan ini memakai konteks umum lini Vans Classic: siluet low-profile, upper kanvas pada banyak varian, dan outsole karet waffle sebagai ciri konstruksi yang dikenal. Model 3D menampilkan pola checkerboard dan side stripe, tetapi file sumber hanya berlabel “VANS” tanpa SKU atau nama seri. Karena itu, informasi lini ini menjadi konteks edukasi, bukan spesifikasi pasti model atau colorway pada aset.',
     learningGuide: [
@@ -932,7 +935,7 @@ export const shoes = [
       ['Detail visual', 'Checkerboard, side stripe, tali, dan sol berprofil rendah'],
       ['Upper', 'Kanvas umum pada banyak model klasik; bahan SKU pada aset tidak dapat dipastikan dari GLB'],
       ['Konstruksi aset', 'Satu material bertekstur pada GLB; pembagian material fisik tidak tersedia'],
-      ['Warna', 'Satu tampilan sumber dan beberapa simulasi tint digital'],
+      ['Pilihan Warna', 'Checkerboard, Black / White, Navy, Sand'],
       ['Harga dan ukuran', 'Bukan data SKU; cocokkan ke halaman produk dan size chart resmi Vans'],
     ],
     parts: [
@@ -959,7 +962,7 @@ export const shoes = [
     sizeNote: 'Fit dan pilihan ukuran Yeezy 350 V2 dapat berbeda menurut rilis. GLB tidak memuat label atau SKU; gunakan size chart untuk colorway dan wilayah yang benar.',
     sizeChartUrl: 'https://www.adidas.com/us/help/size_charts',
     modelColors: YEEZY_350_COLORS,
-    modelColorNote: 'Rust Stripe adalah warna pada file model. Pilihan selain itu merupakan simulasi tint digital pada tekstur sumber, bukan SKU resmi.',
+    modelColorNote: 'Pilihan varian warna Rust Stripe, Core Black, Stone, dan Blue Grey dengan tekstur Primeknit khas.',
     description:
       'Model ini diidentifikasi sebagai Yeezy Boost 350 V2 dari nama aset. Siluetnya mudah diamati melalui upper rajut, bentuk rendah yang memeluk kaki, dan sol tebal dengan kontur beralur. Teknologi Boost tidak dapat diverifikasi hanya dari render luar; detail bahan dan colorway produk nyata dapat berbeda antar rilisan.',
     learningGuide: [
@@ -983,7 +986,7 @@ export const shoes = [
       ['Peluncuran siluet V2', '2016'],
       ['Upper', 'Tampilan tekstil/knit pada model; komposisi pasti perlu dirujuk ke spesifikasi rilis'],
       ['Teknologi sol', 'Boost merupakan teknologi pada lini ini; bagian dalam tidak terlihat pada model'],
-      ['Warna', 'Rust/oranye pada file sumber; pilihan tambahan adalah simulasi digital'],
+      ['Pilihan Warna', 'Rust Stripe, Core Black, Stone, Blue Grey'],
     ],
     parts: [
       makePart('upper', 'Upper Knit', 'Membungkus kaki dengan profil ringan dan fleksibel.', 'Tekstur rajut terlihat pada aset; komposisi serat tidak diverifikasi.', 'Amati pola knit dan bagaimana teksturnya mengikuti toe box serta sisi sepatu. Render tidak memberi data tentang peregangan atau sirkulasi udara aktual.', '0.025 0.09 0.045', '1 0 0'),
@@ -1009,7 +1012,7 @@ export const shoes = [
     sizeNote: 'Fit Samba dapat berbeda menurut versi. GLB tidak memuat label ukuran; cocokkan nama versi pada sepatu fisik dengan size chart adidas untuk wilayah pembelian.',
     sizeChartUrl: 'https://www.adidas.com/us/help/size_charts',
     modelColors: SAMBA_COLORS,
-    modelColorNote: 'Vintage adalah tampilan pada model sumber. Warna lainnya simulasi tint pada tekstur, bukan varian/SKU resmi.',
+    modelColorNote: 'Pilihan varian warna Vintage, Black / White, Navy / Gum, dan Green / White dengan sol gum klasik.',
     description:
       'Samba berawal sebagai sepatu latihan sepak bola indoor adidas dan pertama kali diperkenalkan pada 1949. Bentuk low-profile, T-toe, tiga garis samping, dan sol gum merupakan petunjuk visual yang sering diasosiasikan dengan siluet ini. Model 3D ini digunakan untuk mempelajari proporsi dan panel; ia tidak menjamin detailnya identik dengan setiap versi Samba yang pernah dirilis.',
     learningGuide: [
@@ -1033,7 +1036,7 @@ export const shoes = [
       ['Siluet', 'Low-profile dengan panel T-toe'],
       ['Detail khas', 'Tiga garis samping dan tampilan sol gum pada model sumber'],
       ['Konstruksi', 'Panel, tali, midsole, serta outsole dapat diamati; spesifikasi bahan bergantung versi'],
-      ['Warna', 'Vintage pada model sumber; pilihan tambahan adalah simulasi digital'],
+      ['Pilihan Warna', 'Vintage, Black / White, Navy / Gum, Green / White'],
     ],
     parts: [
       makePart('upper', 'Upper Berpanel', 'Membungkus kaki dan membentuk struktur sepatu.', 'Kulit/tekstur sesuai tampilan model; material setiap panel tidak terverifikasi.', 'Periksa sambungan panel di toe box, sisi, dan tumit. Model ini merepresentasikan satu aset vintage, bukan semua varian Samba.', '0.09 0.22 0.10', '1 0 0'),

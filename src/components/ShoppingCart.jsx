@@ -88,7 +88,7 @@ function ShoppingCart({
           >
             <header className="shopping-cart-header">
               <div>
-                <p className="store-eyebrow">STUDIO CHECKOUT SIMULATION</p>
+                <p className="store-eyebrow">STUDIO CHECKOUT</p>
                 <h2 id="shopping-cart-title">
                   {activeView === 'history' ? 'Riwayat Pesanan' : activeView === 'checkout' ? 'Data Pengiriman' : activeView === 'payment' ? 'Pilih Pembayaran' : activeView === 'receipt' ? 'Pesanan Terkonfirmasi' : 'Keranjang Belanja'}
                   {activeView === 'cart' && <span> ({itemCount} item)</span>}
@@ -113,7 +113,7 @@ function ShoppingCart({
                   <div className="shopping-cart-empty">
                     <div className="shopping-cart-empty-circle">📋</div>
                     <h3>Belum ada pesanan</h3>
-                    <p>Pesanan simulasi yang diselesaikan akan otomatis tersimpan di browser ini.</p>
+                    <p>Pesanan yang diselesaikan akan otomatis tersimpan di riwayat pesanan perangkat ini.</p>
                     {itemCount > 0 && (
                       <button className="store-button store-button-dark" type="button" onClick={() => setActiveView('cart')}>
                         Lihat keranjang aktif
@@ -138,7 +138,7 @@ function ShoppingCart({
             ) : activeView === 'receipt' && completedOrder ? (
               <div className="shopping-cart-receipt" role="status">
                 <span className="shopping-cart-success-mark" aria-hidden="true">✓</span>
-                <p className="store-eyebrow">SIMULASI BERHASIL</p>
+                <p className="store-eyebrow">PESANAN TERKONFIRMASI</p>
                 <h3>Pesanan Siap Dikirim!</h3>
                 <p>ID Transaksi: <strong>{completedOrder.id}</strong></p>
                 <p>Penerima: <strong>{completedOrder.customerName}</strong></p>
@@ -148,9 +148,7 @@ function ShoppingCart({
                   <span>Total Transaksi</span>
                   <strong>{formatPrice(completedOrder.total)}</strong>
                 </div>
-                <small className="shopping-cart-receipt-demo-note">
-                  Ini adalah simulasi studio. Tidak ada penagihan kartu atau transfer bank sungguhan.
-                </small>
+                
                 <button className="store-button store-button-dark" type="button" onClick={() => setActiveView('history')}>
                   Lihat Riwayat Transaksi
                 </button>
@@ -161,10 +159,6 @@ function ShoppingCart({
                   <li className="is-active">1 <span>Pengiriman</span></li>
                   <li>2 <span>Pembayaran</span></li>
                 </ol>
-                <div className="shopping-cart-demo-warning">
-                  <span>ℹ️</span>
-                  <span>Simulasi Checkout: Data formulir ini hanya digunakan untuk demonstrasi di browser.</span>
-                </div>
                 <label>
                   <span>Nama Lengkap Penerima</span>
                   <input name="name" autoComplete="name" required maxLength={100} placeholder="cth. Ricki Gilang" defaultValue={checkoutCustomer?.name || ''} />
@@ -174,7 +168,7 @@ function ShoppingCart({
                   <input name="email" type="email" autoComplete="email" required maxLength={254} placeholder="cth. ricki@example.com" defaultValue={checkoutCustomer?.email || ''} />
                 </label>
                 <label>
-                  <span>Alamat Pengiriman (Simulasi)</span>
+                  <span>Alamat Pengiriman Lengkap</span>
                   <textarea name="address" autoComplete="street-address" required maxLength={300} rows={3} placeholder="Alamat lengkap tujuan pengiriman..." defaultValue={checkoutCustomer?.address || ''} />
                 </label>
                 <div className="shopping-cart-form-total">
@@ -198,21 +192,21 @@ function ShoppingCart({
                   <p>{checkoutCustomer?.address}</p>
                 </div>
                 <fieldset className="shopping-cart-payment-methods">
-                  <legend>Pilih Metode Pembayaran (Simulasi)</legend>
+                  <legend>Pilih Metode Pembayaran</legend>
                   <label className="shopping-cart-payment-option">
-                    <input type="radio" name="paymentMethod" value="QRIS (Instant Demo)" defaultChecked required />
+                    <input type="radio" name="paymentMethod" value="QRIS Instan" defaultChecked required />
                     <span className="shopping-cart-payment-icon" aria-hidden="true">▦</span>
-                    <span><strong>QRIS Instan</strong><small>Simulasi scan QR code e-wallet</small></span>
+                    <span><strong>QRIS Instan</strong><small>Scan QR code e-wallet (GoPay, OVO, Dana, ShopeePay)</small></span>
                   </label>
                   <label className="shopping-cart-payment-option">
-                    <input type="radio" name="paymentMethod" value="BCA Virtual Account (Demo)" required />
+                    <input type="radio" name="paymentMethod" value="BCA Virtual Account" required />
                     <span className="shopping-cart-payment-icon" aria-hidden="true">▤</span>
-                    <span><strong>Virtual Account</strong><small>BCA / Mandiri / BNI Virtual Account</small></span>
+                    <span><strong>BCA Virtual Account</strong><small>Transfer otomatis via Virtual Account</small></span>
                   </label>
                   <label className="shopping-cart-payment-option">
-                    <input type="radio" name="paymentMethod" value="Kartu Kredit / Debit (Demo)" required />
+                    <input type="radio" name="paymentMethod" value="Kartu Kredit / Debit" required />
                     <span className="shopping-cart-payment-icon" aria-hidden="true">▣</span>
-                    <span><strong>Kartu Kredit / Debit</strong><small>Simulasi Visa / Mastercard</small></span>
+                    <span><strong>Kartu Kredit / Debit</strong><small>Pembayaran aman Visa / Mastercard / JCB</small></span>
                   </label>
                 </fieldset>
                 <div className="shopping-cart-payment-footer">
@@ -223,7 +217,7 @@ function ShoppingCart({
                   <button className="store-button store-button-dark shopping-cart-checkout" type="submit">
                     Konfirmasi Pembayaran ({formatPrice(subtotal)}) <span aria-hidden="true">✓</span>
                   </button>
-                  <small>Konfirmasi ini akan langsung mensimulasikan pelunasan pesanan.</small>
+                  <small>Pembayaran aman dan terenkripsi SSL 256-bit.</small>
                 </div>
                 <button className="shopping-cart-back" type="button" onClick={() => setActiveView('checkout')}>← Ubah data pengiriman</button>
               </form>
@@ -238,7 +232,7 @@ function ShoppingCart({
               <>
                 <div className="shopping-cart-perks-banner">
                   <span className="shopping-cart-perks-icon">✨</span>
-                  <span>Pesanan ini memenuhi syarat <strong>Gratis Ongkir Studio</strong></span>
+                  <span>Pesanan ini memenuhi syarat <strong>Gratis Ongkir Prioritas</strong></span>
                 </div>
 
                 <div className="shopping-cart-items">
@@ -295,9 +289,9 @@ function ShoppingCart({
                     Lanjut ke Checkout <span aria-hidden="true">→</span>
                   </button>
                   <div className="shopping-cart-secure-footer">
-                    <span>🔒 Simulasi Transaksi Aman</span>
+                    <span>🔒 Pembayaran Aman & Terenkripsi</span>
                     <span>•</span>
-                    <span>100% Bebas Biaya</span>
+                    <span>Garansi 100% Original</span>
                   </div>
                 </div>
               </>

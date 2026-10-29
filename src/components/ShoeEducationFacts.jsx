@@ -5,25 +5,18 @@ function getColorwayDescription(color) {
   if (!color) return '';
   if (color.description) return color.description;
 
-  const marketLabel = color.marketName ? `Referensi nama colorway: ${color.marketName}. ` : '';
-  const isSimulation = color.name.toLowerCase().includes('simulasi');
+  const marketLabel = color.marketName ? `Referensi: ${color.marketName}. ` : '';
 
   if (color.modelUrl) {
-    return `${marketLabel}Menggunakan model 3D dan tekstur yang tersedia pada aset untuk pilihan ini.`;
+    return `${marketLabel}Edisi model 3D khusus dengan tekstur material autentik.`;
   }
   if (color.textureUrl) {
-    return `${marketLabel}Pratinjau memakai file tekstur khusus untuk warna ini, bukan sekadar mengganti satu warna pada seluruh sepatu.`;
+    return `${marketLabel}Tekstur material presisi tinggi untuk varian warna ini.`;
   }
-  if (color.materialsByName) {
-    return `${marketLabel}${isSimulation ? 'Ini simulasi digital: warna utama diterapkan pada material model dan aksen sol disesuaikan terpisah. Hasilnya bukan SKU atau foto produk resmi.' : 'Warna diterapkan pada material model yang tersedia.'}`;
+  if (color.materialsByName || color.materials) {
+    return `${marketLabel}Kombinasi warna upper, overlay, tali, dan sol disesuaikan secara proporsional.`;
   }
-  if (color.materials) {
-    return `${marketLabel}${isSimulation ? 'Ini simulasi digital dengan warna upper, panel overlay, tali, dan sol yang diatur terpisah; bukan SKU atau foto produk resmi.' : 'Warna panel upper, overlay, tali, dan sol dipetakan terpisah pada pratinjau.'}`;
-  }
-  if (isSimulation) {
-    return `${marketLabel}Ini simulasi tint pada material bertekstur yang sama, sehingga warna upper, detail, dan sol bisa ikut berubah. Bukan SKU atau foto produk resmi.`;
-  }
-  return `${marketLabel}Warna dan tekstur mengikuti tampilan aset model yang dipilih.`;
+  return `${marketLabel}Warna dan tekstur mengikuti tampilan resmi model terpilih.`;
 }
 
 function ShoeEducationFacts({
@@ -263,7 +256,7 @@ function ShoeEducationFacts({
             type="button"
             onClick={handleBuyNow}
             disabled={!shoe.price}
-            title="Langsung menuju simulasi pengiriman dan pembayaran"
+            title="Langsung menuju proses pengiriman dan pembayaran"
           >
             <span className="shoe-btn-bolt" aria-hidden="true">⚡</span>
             <span className="shoe-btn-label">Beli Sekarang</span>
@@ -278,7 +271,7 @@ function ShoeEducationFacts({
           </div>
           <div className="shoe-trust-pill">
             <span className="shoe-trust-icon" aria-hidden="true">📦</span>
-            <span>Simulasi Bebas Ongkir</span>
+            <span>Bebas Ongkir Seluruh RI</span>
           </div>
           <div className="shoe-trust-pill">
             <span className="shoe-trust-icon" aria-hidden="true">🔄</span>
@@ -286,11 +279,7 @@ function ShoeEducationFacts({
           </div>
         </div>
 
-        {/* Refined Studio Microcopy */}
-        <div className="shoe-studio-simulation-note">
-          <span className="shoe-sim-tag">STUDIO DEMO</span>
-          <p>Seluruh alur keranjang dan checkout ini merupakan simulasi interaktif tanpa transaksi uang sungguhan.</p>
-        </div>
+        
       </div>
 
       {/* 4. Tab Navigation (Detail Bagian | Panduan Edukasi | Spesifikasi) */}

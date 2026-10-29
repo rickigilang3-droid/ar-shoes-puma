@@ -24,7 +24,7 @@ function ShoeCatalogPage({ onOpenShoe, onStartAR, onCompare }) {
           <a className="catalog-nav-link" href="#collection">Koleksi</a>
           <a className="catalog-nav-link" href="#experience">Pengalaman</a>
           <button className="store-header-ar catalog-ar-button" type="button" onClick={onStartAR}>
-            <span aria-hidden="true">◉</span> Coba demo AR
+            <span aria-hidden="true">◉</span> Buka Mode AR
           </button>
         </nav>
       </header>

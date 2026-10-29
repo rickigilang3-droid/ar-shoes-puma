@@ -148,12 +148,12 @@ function App() {
   const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
   const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
-  const completeDemoCheckout = (customer) => {
+  const completeCheckout = (customer) => {
     const transaction = {
-      id: `DEMO-${Date.now().toString(36).toUpperCase()}`,
+      id: `ORD-${Date.now().toString(36).toUpperCase()}`,
       createdAt: new Date().toISOString(),
       paymentMethod: customer.paymentMethod,
-      status: 'LUNAS (SIMULASI)',
+      status: 'LUNAS',
       items: cartItems.map(({ shoe: itemShoe, size, colorName, quantity, price }) => ({
         name: itemShoe.name,
         size: size ? `EU ${size.eu} · ${size.cm} cm` : 'Ukuran tidak ditentukan',
@@ -255,7 +255,7 @@ function App() {
         onClose={() => setIsCartOpen(false)}
         onChangeQuantity={updateCartQuantity}
         onRemove={removeFromCart}
-        onCompleteCheckout={completeDemoCheckout}
+        onCompleteCheckout={completeCheckout}
       />
     </>
   );

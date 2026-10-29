@@ -310,7 +310,7 @@ export function AROverlay({
 
             <img
               src="/targets/shoe-qr.png"
-              alt="Gambar target untuk demo AR Puma Suede"
+              alt="Gambar target untuk AR Puma Suede"
               className="target-modal-img"
             />
 

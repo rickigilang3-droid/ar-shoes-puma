@@ -72,7 +72,7 @@ function ARPage({ onBack }) {
         </button>
         <section className="ar-intro-content" aria-labelledby="ar-intro-title">
           <div className="ar-intro-copy">
-            <p className="store-eyebrow">PENGALAMAN AR · DEMO PUMA SUEDE</p>
+            <p className="store-eyebrow">PENGALAMAN AR · PUMA SUEDE 3D</p>
             <h1 id="ar-intro-title">Siapkan kamera,<br /><em>lalu scan.</em></h1>
             <p className="ar-intro-description">
               Model 3D baru muncul setelah gambar target dikenali. Kamera hanya aktif
@@ -101,7 +101,7 @@ function ARPage({ onBack }) {
           <figure className="ar-intro-target">
             <img src="/targets/shoe-qr.png" alt="Contoh kartu gambar target AR Puma Suede" />
             <figcaption>
-              Target demo AR — tampilkan gambar ini secara utuh, bukan hanya kode QR.
+              Target gambar AR — tampilkan gambar ini secara utuh, bukan hanya kode QR.
               <a href="/target.html" target="_blank" rel="noreferrer">Buka target ukuran penuh ↗</a>
             </figcaption>
           </figure>
