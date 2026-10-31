@@ -4,7 +4,7 @@ import ShoeEducationFacts from '../components/ShoeEducationFacts';
 import './ShoeStore.css';
 import { shoes } from '../data/products';
 
-function ShoeDetailPage({ shoe, onBack, onCompare, onAddToCart, onBuyNow }) {
+function ShoeDetailPage({ shoe, onBack, onCompare, onAddToCart, onBuyNow, onStartAR }) {
   const [selectedPartId, setSelectedPartId] = useState(shoe.parts[0]?.id ?? null);
   const [selectedColor, setSelectedColor] = useState(() => shoe.modelColors?.[0] ?? null);
   const selectedPart = shoe.parts.find((part) => part.id === selectedPartId);
@@ -103,7 +103,18 @@ function ShoeDetailPage({ shoe, onBack, onCompare, onAddToCart, onBuyNow }) {
           <span className="store-mark" aria-hidden="true">{brandInitial}</span>
           <span>{brandName} <small>AR STUDIO</small></span>
         </a>
-        <span className="store-detail-counter">{shoeNumber} / {String(shoes.length).padStart(2, '0')}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <button
+            className="store-header-ar detail-ar-button"
+            type="button"
+            onClick={() => onStartAR?.(shoe.id)}
+            title="Lihat model 3D sepatu ini di kamera AR"
+          >
+            <span className="ar-icon" aria-hidden="true">📷</span>
+            <span>Lihat di AR</span>
+          </button>
+          <span className="store-detail-counter">{shoeNumber} / {String(shoes.length).padStart(2, '0')}</span>
+        </div>
       </header>
 
       <section className="shoe-detail-layout" ref={layoutRef}>

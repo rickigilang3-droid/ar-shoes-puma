@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Modular WebAR Sneaker Experience (A-Frame / AR.js)</title>
+  
+  <!-- A-Frame 1.4.2 -->
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <!-- AR.js for A-Frame -->
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+  
+  <!-- Modular Frontend Custom Components -->
+  <script src="js/gesture-controls.js"></script>
+  <script src="js/color-variant.js"></script>
+  <script src="js/app.js" defer></script>
+  
+  <link rel="stylesheet" href="css/ar-style.css" />
+</head>
+<body>
+
+  <!-- Floating HUD Glass Overlay -->
+  <div id="ar-ui-overlay">
+    <!-- Header -->
+    <header class="ar-hud-header">
+      <a href="/" class="ar-hud-back">← Kembali ke Studio</a>
+      <div id="tracking-badge" class="tracking-pill searching">
+        <span class="status-dot"></span>
+        <span id="tracking-text">Mencari marker target…</span>
+      </div>
+    </header>
+
+    <!-- Scan Finder Guide (Saat marker belum ditemukan) -->
+    <div id="scan-guide" class="scan-guide-box">
+      <div class="viewfinder-frame">
+        <span class="corner tl"></span>
+        <span class="corner tr"></span>
+        <span class="corner bl"></span>
+        <span class="corner br"></span>
+        <div class="scan-laser"></div>
+      </div>
+      <p>Arahkan kamera ke gambar marker (Hiro / Target Card)</p>
+      <small>Gunakan kartu gambar target dengan kontras tinggi</small>
+    </div>
+
+    <!-- Active Controls Panel (Muncul saat marker terdeteksi) -->
+    <div id="active-controls" class="controls-card hidden">
+      <div class="control-section">
+        <div class="section-title">
+          <span>🎨 Pilihan Varian Warna:</span>
+          <span id="current-color-name">Original</span>
+        </div>
+        <div class="color-palette" role="radiogroup">
+          <button class="color-dot active" data-color="null" style="--c: #ffffff;" title="Original GLB">
+            <span>👟</span>
+          </button>
+          <button class="color-dot" data-color="#18181b" data-name="Hitam Obsidian" style="--c: #18181b;" title="Hitam Obsidian"></button>
+          <button class="color-dot" data-color="#f8fafc" data-name="Putih Murni" style="--c: #f8fafc;" title="Putih Murni"></button>
+          <button class="color-dot" data-color="#dc2626" data-name="Merah Crimson" style="--c: #dc2626;" title="Merah Crimson"></button>
+          <button class="color-dot" data-color="#2563eb" data-name="Biru Royal" style="--c: #2563eb;" title="Biru Royal"></button>
+          <button class="color-dot" data-color="#15803d" data-name="Hijau Emerald" style="--c: #15803d;" title="Hijau Emerald"></button>
+          <button class="color-dot" data-color="#d97706" data-name="Kuning Amber" style="--c: #d97706;" title="Kuning Amber"></button>
+        </div>
+      </div>
+
+      <div class="control-actions">
+        <button id="btn-toggle-rotate" class="btn-tool">
+          <span>🔄 Auto-Rotate:</span>
+          <strong id="rotate-status">ON</strong>
+        </button>
+        <button id="btn-zoom-in" class="btn-tool btn-icon" title="Perbesar">+</button>
+        <button id="btn-zoom-out" class="btn-tool btn-icon" title="Perkecil">−</button>
+        <button id="btn-reset" class="btn-tool">⟲ Reset</button>
+      </div>
+
+      <div class="gesture-hint-sub">
+        👆 Geser di layar untuk putar 360° · Cubit 2 jari (pinch) untuk zoom
+      </div>
+    </div>
+  </div>
+
+  <!-- A-Frame AR Scene -->
+  <a-scene
+    embedded
+    arjs="sourceType: webcam; debugUIEnabled: false; trackingMethod: best; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
+    renderer="logarithmicDepthBuffer: true; colorManagement: true; antialias: true;"
+    vr-mode-ui="enabled: false"
+  >
+    <!-- Asset Preload -->
+    <a-assets>
+      <a-asset-item id="shoe-model" src="/models/puma_suede.glb"></a-asset-item>
+    </a-assets>
+
+    <!-- Marker Target (Menggunakan Hiro Marker universal yang kompatibel di semua layar) -->
+    <a-marker
+      id="shoe-marker"
+      preset="hiro"
+      emitevents="true"
+      smooth="true"
+      smoothCount="10"
+      smoothTolerance="0.01"
+      smoothThreshold="5"
+    >
+      <!-- Sepatu 3D Container -->
+      <a-entity
+        id="shoe-entity"
+        gltf-model="#shoe-model"
+        position="0 0.2 0"
+        scale="0.85 0.85 0.85"
+        gesture-controls
+        color-customizer
+      ></a-entity>
+    </a-marker>
+
+    <!-- Lighting -->
+    <a-entity light="type: ambient; color: #ffffff; intensity: 1.2;"></a-entity>
+    <a-entity light="type: directional; color: #ffffff; intensity: 1.5; position: 2 4 3;"></a-entity>
+
+    <a-entity camera></a-entity>
+  </a-scene>
+
+</body>
+</html>

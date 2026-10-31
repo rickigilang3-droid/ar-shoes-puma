@@ -37,7 +37,10 @@ class RouteErrorBoundary extends Component {
 }
 
 const getRoute = () => {
-  if (/^\/ar\/?$/.test(window.location.pathname)) return { page: 'ar' };
+  if (/^\/ar\/?$/.test(window.location.pathname)) {
+    const params = new URLSearchParams(window.location.search);
+    return { page: 'ar', shoeId: params.get('shoe') };
+  }
   if (/^\/compare\/?$/.test(window.location.pathname)) {
     const params = new URLSearchParams(window.location.search);
     return { page: 'compare', leftId: params.get('left'), rightId: params.get('right') };
@@ -195,7 +198,7 @@ function App() {
   } else if (route.page === 'ar') {
     page = (
       <Suspense fallback={<main className="store-not-found"><h1>Menyiapkan mode AR…</h1></main>}>
-        <ARPage onBack={() => navigate('/')} />
+        <ARPage onBack={() => navigate('/')} initialShoeId={route.shoeId} />
       </Suspense>
     );
   } else if (route.page === 'compare') {
@@ -241,6 +244,7 @@ function App() {
           <ShoeDetailPage
             shoe={shoe}
             onBack={() => navigate('/')}
+            onStartAR={(shoeId) => navigate(shoeId ? `/ar?shoe=${encodeURIComponent(shoeId)}` : '/ar')}
             onAddToCart={(size, color) => addToCart(shoe, size, color, 'cart')}
             onBuyNow={(size, color) => addToCart(shoe, size, color, 'checkout')}
             onCompare={(leftId, rightId) => navigate(`/compare?left=${encodeURIComponent(leftId)}&right=${encodeURIComponent(rightId)}`)}

@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#101513" />
+    <title>AR Shoes | AR.js Experience</title>
+    <link rel="stylesheet" href="/arjs-nft.css" />
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script defer src="/arjs-nft.js"></script>
+  </head>
+  <body>
+    <header class="hud">
+      <a class="brand" href="/" aria-label="Kembali ke AR Shoes">AR SHOES / A-FRAME</a>
+      <output id="tracking-status" class="status" data-state="searching" aria-live="polite">
+        Memuat kamera dan target AR…
+      </output>
+    </header>
+
+    <section class="control-dock" aria-label="Kontrol sepatu AR">
+      <div class="controls">
+        <div class="control-group">
+          <span class="control-label">ROTASI</span>
+          <div class="button-row">
+            <button type="button" data-action="rotate-left" data-model-control disabled aria-label="Putar ke kiri" title="Putar ke kiri">↶</button>
+            <button type="button" data-action="rotate-right" data-model-control disabled aria-label="Putar ke kanan" title="Putar ke kanan">↷</button>
+          </div>
+        </div>
+        <div class="control-group">
+          <span class="control-label">ZOOM <output id="zoom-readout">100%</output></span>
+          <div class="button-row">
+            <button type="button" data-action="zoom-out" data-model-control disabled aria-label="Perkecil sepatu" title="Perkecil">−</button>
+            <button type="button" data-action="zoom-in" data-model-control disabled aria-label="Perbesar sepatu" title="Perbesar">+</button>
+          </div>
+        </div>
+        <div class="control-group color-group">
+          <span class="control-label">WARNA</span>
+          <div class="swatches" role="group" aria-label="Pilih warna sepatu">
+            <button type="button" class="swatch" data-color="#17191d" data-model-control disabled aria-label="Hitam" title="Hitam" style="--swatch: #17191d"></button>
+            <button type="button" class="swatch" data-color="#a92f38" data-model-control disabled aria-label="Merah" title="Merah" style="--swatch: #a92f38"></button>
+            <button type="button" class="swatch" data-color="#e8e1cf" data-model-control disabled aria-label="Krem" title="Krem" style="--swatch: #e8e1cf"></button>
+            <button type="button" class="swatch" data-color="#285c91" data-model-control disabled aria-label="Biru" title="Biru" style="--swatch: #285c91"></button>
+          </div>
+        </div>
+        <button type="button" class="reset-button" data-action="reset" data-model-control disabled title="Reset tampilan">Reset</button>
+      </div>
+      <p class="hint">Arahkan kamera ke kartu marker (Hiro / Target) · Putar, Zoom, dan Ubah Warna langsung di layar</p>
+    </section>
+
+    <a-scene
+      embedded
+      vr-mode-ui="enabled: false"
+      renderer="alpha: true; antialias: true; colorManagement: true; physicallyCorrectLights: true; shadowMapEnabled: true; shadowMapType: pcfsoft"
+      arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
+    >
+      <a-assets>
+        <a-asset-item id="shoe-model" src="/models/puma_suede.glb"></a-asset-item>
+      </a-assets>
+
+      <a-entity light="type: ambient; color: #ffffff; intensity: 1.15"></a-entity>
+      <a-entity
+        light="type: directional; color: #fff4df; intensity: 1.8; castShadow: true; shadowCameraVisible: false"
+        position="-1 3 2"
+      ></a-entity>
+      <a-entity
+        light="type: directional; color: #dce9ff; intensity: 0.65"
+        position="2 1 -2"
+      ></a-entity>
+
+      <!-- Target Marker Universal Hiro -->
+      <a-marker
+        id="shoe-target"
+        preset="hiro"
+        emitevents="true"
+        smooth="true"
+        smoothCount="10"
+        smoothTolerance="0.01"
+        smoothThreshold="5"
+      >
+        <a-entity
+          id="shoe-model-entity"
+          gltf-model="#shoe-model"
+          fit-shoe="targetSize: 0.34; lift: 0.015"
+          rotation="0 90 0"
+          shoe-controls
+          shadow="cast: true; receive: true"
+        ></a-entity>
+        <a-plane
+          position="0 0 0"
+          rotation="-90 0 0"
+          width="0.42"
+          height="0.24"
+          material="color: #151a17; transparent: true; opacity: 0.2; roughness: 1; metalness: 0"
+          shadow="receive: true"
+        ></a-plane>
+      </a-marker>
+
+      <a-entity camera look-controls="enabled: false" wasd-controls="enabled: false"></a-entity>
+    </a-scene>
+  </body>
+</html>

@@ -3,79 +3,198 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AR Shoes — Kartu Target</title>
+  <title>AR Shoes — Kartu Target Marker AR</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      background: #f5f5f0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 2rem;
+      padding: 1.5rem;
     }
-    .card {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 32px rgba(0,0,0,0.12);
-      padding: 2rem;
-      max-width: 440px;
+    .container {
+      max-width: 860px;
       width: 100%;
+      display: grid;
+      gap: 1.5rem;
+    }
+    .header-card {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 1.5rem 1.75rem;
       text-align: center;
     }
-    h1 { font-size: 1.4rem; color: #1a1a2e; margin-bottom: 0.5rem; }
-    p  { color: #666; font-size: 0.9rem; margin-bottom: 1.5rem; }
-    .target-img {
-      width: 100%;
-      border-radius: 8px;
-      border: 3px solid #e94560;
-      display: block;
-      margin-bottom: 1.5rem;
+    .header-card h1 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: #ffffff;
     }
-    .steps { text-align: left; }
-    .step  { display: flex; gap: 0.75rem; margin-bottom: 0.75rem; align-items: flex-start; }
-    .num   { background: #e94560; color: #fff; width: 26px; height: 26px; border-radius: 50%;
-             display: flex; align-items: center; justify-content: center; font-size: 0.8rem;
-             font-weight: 700; flex-shrink: 0; }
-    .step-text { font-size: 0.88rem; color: #444; line-height: 1.5; padding-top: 2px; }
-    .badge {
-      display: inline-block;
-      background: #1a1a2e; color: #fff;
-      border-radius: 50px; padding: 0.35rem 1rem;
-      font-size: 0.8rem; margin-top: 1.25rem;
+    .header-card p {
+      color: #94a3b8;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+    .target-card {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 1.5rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+    .target-card h2 {
+      font-size: 1.15rem;
+      margin-bottom: 0.35rem;
+      color: #facc15;
+    }
+    .target-card p {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-bottom: 1rem;
+    }
+    .target-img-box {
+      background: #ffffff;
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 1.2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 2px solid #0f172a;
+    }
+    .target-img {
+      max-width: 100%;
+      height: 220px;
+      object-fit: contain;
+      border-radius: 6px;
+      display: block;
+    }
+    .btn-row {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .btn {
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      border: 0;
+    }
+    .btn-primary {
+      background: #facc15;
+      color: #0f172a;
+    }
+    .btn-primary:hover {
+      background: #eab308;
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .steps-box {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+    .steps-box ol {
+      margin: 0;
+      padding-left: 1.2rem;
+    }
+    .steps-box li {
+      margin-bottom: 0.35rem;
     }
     @media print {
-      body { background: #fff; padding: 0; }
-      .card { box-shadow: none; border-radius: 0; max-width: 100%; }
+      body { background: #fff; color: #000; padding: 0; }
+      .header-card, .steps-box, .btn-row { display: none; }
+      .target-card { border: 0; box-shadow: none; background: #fff; }
+      .target-img-box { border: 0; }
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>👟 AR Shoes — Kartu Target AR</h1>
-    <p>Tampilkan kartu ini di perangkat lain atau cetak, lalu arahkan kamera AR ke seluruh kartu agar sepatu 3D muncul.</p>
-    <img class="target-img" src="/targets/shoe-qr.png" alt="Kartu target AR Shoes" />
-    <div class="steps">
-      <div class="step">
-        <div class="num">1</div>
-        <div class="step-text">Tampilkan seluruh kartu ini di perangkat lain atau cetak dengan ukuran yang jelas</div>
+  <div class="container">
+    <div class="header-card">
+      <h1>🎯 Kartu Gambar Target Marker AR</h1>
+      <p>
+        Pilih kartu target di bawah ini untuk menampilkan model 3D sepatu.
+        Tampilkan di layar laptop/HP kedua atau cetak di atas kertas untuk pengalaman pelacakan kamera terbaik.
+      </p>
+    </div>
+
+    <div class="cards-grid">
+      <!-- Target 1: MindAR Studio Target -->
+      <div class="target-card">
+        <div>
+          <h2>Target 1: Studio Card (MindAR)</h2>
+          <p>Digunakan pada halaman utama Web AR (`/ar`) dengan pelacakan natural feature berkontras tinggi.</p>
+          <div class="target-img-box">
+            <img class="target-img" src="/targets/shoe-qr.png" alt="Target Gambar MindAR" />
+          </div>
+        </div>
+        <div class="btn-row">
+          <a href="/ar" class="btn btn-primary">Buka Kamera AR ↗</a>
+          <button class="btn btn-secondary" onclick="window.print()">🖨️ Cetak</button>
+        </div>
       </div>
-      <div class="step">
-        <div class="num">2</div>
-        <div class="step-text">Tekan <strong>Mulai Scan AR</strong> di situs dan izinkan akses kamera</div>
-      </div>
-      <div class="step">
-        <div class="num">3</div>
-        <div class="step-text">Arahkan kamera AR ke seluruh kartu sampai sepatu 3D muncul</div>
-      </div>
-      <div class="step">
-        <div class="num">4</div>
-        <div class="step-text">Klik atau tap bagian sepatu untuk membaca informasi edukasi</div>
+
+      <!-- Target 2: Universal Hiro Marker -->
+      <div class="target-card">
+        <div>
+          <h2>Target 2: Hiro Marker (A-Frame / AR.js)</h2>
+          <p>Marker universal berstandar AR.js untuk pengujian cepat rotasi, zoom, dan warna modular.</p>
+          <div class="target-img-box">
+            <img
+              class="target-img"
+              src="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png"
+              alt="Hiro Marker Universal"
+            />
+          </div>
+        </div>
+        <div class="btn-row">
+          <a href="/ar-catalog/index.html" class="btn btn-primary">Buka A-Frame AR ↗</a>
+          <a href="/arjs-nft.html" class="btn btn-secondary">Buka AR.js NFT ↗</a>
+        </div>
       </div>
     </div>
-    <div class="badge">💡 Jaga seluruh kartu tetap fokus dan terlihat oleh kamera</div>
+
+    <div class="steps-box">
+      <strong>Panduan Pelacakan Kamera yang Akurat (Anti-Tracking Loss):</strong>
+      <ol>
+        <li>Pastikan ruangan memiliki pencahayaan cukup dan tidak menimbulkan silau (*glare*) pada layar target.</li>
+        <li>Tampilkan seluruh bingkai hitam dan gambar target secara utuh tanpa terpotong ujungnya.</li>
+        <li>Arahkan kamera dengan jarak 20–40 cm dari gambar sampai sepatu 3D muncul melayang.</li>
+        <li>Gunakan gestur geser 1 jari untuk memutar sepatu, cubit 2 jari (pinch) untuk zoom, dan pilih palet warna di layar.</li>
+      </ol>
+    </div>
   </div>
 </body>
 </html>
