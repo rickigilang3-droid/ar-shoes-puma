@@ -71,15 +71,15 @@ function ShoeEducationFacts({
               <span className="shoe-release-pill">RILIS {shoe.releaseYear}</span>
             )}
           </div>
-          <small>
-            {shoe.priceNote
-              ? shoe.priceNote
-              : shoe.priceDetails
-              ? 'Harga dalam rupiah; cek sumber resmi untuk harga terbaru.'
-              : shoe.price
-                ? 'Bukan jaminan harga terkini di toko.'
-                : 'Harga tidak tercantum pada aset model.'}
-          </small>
+          {(shoe.priceNote || shoe.priceDetails || !shoe.price) && (
+            <small>
+              {shoe.priceNote
+                ? shoe.priceNote
+                : shoe.priceDetails
+                  ? 'Harga dalam rupiah; cek sumber resmi untuk harga terbaru.'
+                  : 'Harga tidak tercantum pada aset model.'}
+            </small>
+          )}
         </div>
       </div>
       {shoe.priceDetails ? (
