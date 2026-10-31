@@ -7390,3 +7390,117 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* ==========================================================================
+   INTERACTIVE CATEGORY FILTER TABS
+   ========================================================================== */
+.catalog-category-filter-bar {
+  margin: 1.5rem 0 2.25rem;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.catalog-category-filter-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.catalog-category-tabs-track {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: max-content;
+  padding: 0.2rem 0;
+}
+
+.catalog-category-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 1.15rem;
+  background: #ffffff;
+  border: 1px solid rgba(21, 23, 19, 0.14);
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.catalog-category-tab:hover {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: rgba(15, 23, 42, 0.35);
+  transform: translateY(-1px);
+}
+
+.catalog-category-tab.is-active {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.22);
+}
+
+.cat-tab-icon {
+  font-size: 0.92rem;
+}
+
+.cat-tab-label {
+  letter-spacing: -0.01em;
+}
+
+.cat-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 0.42rem;
+  border-radius: 999px;
+  font-size: 0.64rem;
+  font-weight: 800;
+  background: #f1f5f9;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.catalog-category-tab.is-active .cat-tab-count {
+  background: rgba(255, 255, 255, 0.18);
+  color: #38bdf8;
+}
+
+.catalog-filter-empty-state {
+  text-align: center;
+  padding: 4.5rem 2rem;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px dashed rgba(21, 23, 19, 0.2);
+  margin: 2rem 0;
+}
+
+.catalog-filter-empty-state .empty-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.catalog-filter-empty-state h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem;
+  color: #0f172a;
+}
+
+.catalog-filter-empty-state p {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0 0 1.25rem;
+}

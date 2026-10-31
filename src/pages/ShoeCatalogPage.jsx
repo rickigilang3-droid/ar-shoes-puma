@@ -3,9 +3,50 @@ import './ShoeStore.css';
 import { formatPrice, shoes } from '../data/products';
 import BarcodeScannerModal from '../components/BarcodeScannerModal';
 
+const CATEGORY_TABS = [
+  { id: 'all', label: 'All', icon: '✦' },
+  { id: 'basketball', label: 'Basketball', icon: '🏀' },
+  { id: 'running', label: 'Running', icon: '🏃' },
+  { id: 'terrace', label: 'Terrace', icon: '👟' },
+  { id: 'skate', label: 'Skate', icon: '🛹' },
+];
+
+function getShoeCategoryGroup(shoe) {
+  const cat = (shoe.category || '').toLowerCase();
+  const id = (shoe.id || '').toLowerCase();
+  const name = (shoe.name || '').toLowerCase();
+
+  if (cat.includes('skate') || id.includes('vans') || name.includes('vans')) {
+    return 'skate';
+  }
+  if (cat.includes('basketball') || id.includes('air-force') || id.includes('dunk') || id.includes('jordan')) {
+    return 'basketball';
+  }
+  if (cat.includes('running') || cat.includes('runner') || cat.includes('air max') || id.includes('air-max') || id.includes('yeezy')) {
+    return 'running';
+  }
+  if (cat.includes('terrace') || cat.includes('court') || cat.includes('indoor') || id.includes('samba') || id.includes('puma')) {
+    return 'terrace';
+  }
+  return 'terrace';
+}
+
 function ShoeCatalogPage({ onOpenShoe, onStartAR, onCompare }) {
   const [compareIds, setCompareIds] = useState([]);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+
+  const filteredShoes = selectedCategory === 'all'
+    ? shoes
+    : shoes.filter((shoe) => getShoeCategoryGroup(shoe) === selectedCategory);
+
+  const categoryCounts = {
+    all: shoes.length,
+    basketball: shoes.filter((s) => getShoeCategoryGroup(s) === 'basketball').length,
+    running: shoes.filter((s) => getShoeCategoryGroup(s) === 'running').length,
+    terrace: shoes.filter((s) => getShoeCategoryGroup(s) === 'terrace').length,
+    skate: shoes.filter((s) => getShoeCategoryGroup(s) === 'skate').length,
+  };
 
   const toggleCompare = (shoeId) => {
     setCompareIds((current) => {
@@ -87,85 +128,131 @@ function ShoeCatalogPage({ onOpenShoe, onStartAR, onCompare }) {
               Setiap model punya konstruksi dan karakter berbeda. Pilih satu untuk mulai melihat lebih dekat.
             </p>
           </div>
-          <span className="store-count catalog-count">{String(shoes.length).padStart(2, '0')} MODEL<br />DALAM KOLEKSI</span>
+          <span className="store-count catalog-count">
+            {filteredShoes.length === shoes.length
+              ? `${String(shoes.length).padStart(2, '0')} MODEL\nDALAM KOLEKSI`
+              : `${String(filteredShoes.length).padStart(2, '0')} DARI ${shoes.length}\nMODEL TERPILIH`}
+          </span>
         </div>
 
-        <div className="store-product-grid catalog-product-grid">
-          {shoes.map((shoe, index) => (
-            <article className="store-product-card" key={shoe.id}>
-              <button
-                className="store-product-open catalog-product-open"
-                onClick={() => onOpenShoe(shoe.id)}
-                aria-label={`Buka detail ${shoe.name}`}
-              >
-                <div className={`shoe-art shoe-art-${index + 1}`} style={{ '--shoe-accent': shoe.accent }}>
-                  <span className="shoe-art-index">MODEL 0{index + 1}</span>
-                  <span className="shoe-art-caption">LIHAT DETAIL <span aria-hidden="true">↗</span></span>
-                  <img
-                    className="catalog-product-image"
-                    src={shoe.image}
-                    alt={`Foto ${shoe.name}`}
-                    loading="lazy"
-                  />
-                </div>
-                <div className="store-card-copy">
-                  <div className="store-card-category">{shoe.category}</div>
-                  <div className="store-card-title-row">
-                    <div>
-                      <h3>{shoe.name}</h3>
-                      <p>{shoe.tagline}</p>
-                    </div>
-                  </div>
-                  <div className="catalog-product-meta">
-                    <span>{shoe.specs[0][1]}</span>
-                    <span>
-                      {shoe.sizeOptions?.length
-                        ? `Ukuran ${shoe.sizeRange}`
-                        : 'Panduan ukuran belum tersedia dari aset'}
-                    </span>
-                  </div>
-                  <div className="catalog-product-bottom">
-                    <span className="catalog-product-price">
-                      {shoe.priceDetails
-                        ? 'Status harga resmi Indonesia'
-                        : shoe.price
-                          ? 'Harga referensi'
-                          : 'Harga belum tersedia'}
-                      {shoe.price && <strong>{formatPrice(shoe.price)}</strong>}
-                      {(shoe.priceDetails || shoe.priceNote || !shoe.price) && (
-                        <small>
-                          {shoe.priceNote ? 'Harga referensi, bukan harga resmi SKU' : 'Lihat sumber dan penjelasan di detail produk'}
-                        </small>
-                      )}
-                    </span>
-                    <ul className="store-card-colors" aria-label={`Warna pada model digital ${shoe.name}`}>
-                      {shoe.modelColors.map((color) => (
-                        <li key={color.name}>
-                          <span
-                            className="shoe-color-swatch"
-                            style={{ '--swatch-color': color.hex }}
-                            title={color.name}
-                          />
-                          <span className="store-card-color-name">{color.name}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </button>
-              <button
-                className={`store-compare-toggle catalog-compare-toggle ${compareIds.includes(shoe.id) ? 'is-selected' : ''}`}
-                type="button"
-                aria-pressed={compareIds.includes(shoe.id)}
-                disabled={!compareIds.includes(shoe.id) && compareIds.length >= 2}
-                onClick={() => toggleCompare(shoe.id)}
-              >
-                <span aria-hidden="true">{compareIds.includes(shoe.id) ? '✓' : '+'}</span>
-                {compareIds.includes(shoe.id) ? 'Dipilih untuk dibandingkan' : 'Pilih untuk dibandingkan'}
-              </button>
-            </article>
-          ))}
+        {/* Filter Tabs Kategori Interaktif */}
+        <div className="catalog-category-filter-bar" role="tablist" aria-label="Filter kategori sepatu">
+          <div className="catalog-category-tabs-track">
+            {CATEGORY_TABS.map((tab) => {
+              const isSelected = selectedCategory === tab.id;
+              const count = categoryCounts[tab.id] || 0;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={isSelected}
+                  className={`catalog-category-tab ${isSelected ? 'is-active' : ''}`}
+                  onClick={() => setSelectedCategory(tab.id)}
+                >
+                  <span className="cat-tab-icon" aria-hidden="true">{tab.icon}</span>
+                  <span className="cat-tab-label">{tab.label}</span>
+                  <span className="cat-tab-count">{count}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
+
+        {filteredShoes.length === 0 ? (
+          <div className="catalog-filter-empty-state">
+            <span className="empty-icon">👟</span>
+            <h3>Belum ada model di kategori ini</h3>
+            <p>Pilih kategori lain untuk menjelajahi koleksi sepatu yang tersedia.</p>
+            <button
+              type="button"
+              className="store-button store-button-dark"
+              onClick={() => setSelectedCategory('all')}
+            >
+              Tampilkan Semua Koleksi
+            </button>
+          </div>
+        ) : (
+          <div className="store-product-grid catalog-product-grid">
+            {filteredShoes.map((shoe) => {
+              const originalIndex = shoes.findIndex((item) => item.id === shoe.id);
+              return (
+                <article className="store-product-card" key={shoe.id}>
+                  <button
+                    className="store-product-open catalog-product-open"
+                    onClick={() => onOpenShoe(shoe.id)}
+                    aria-label={`Buka detail ${shoe.name}`}
+                  >
+                    <div className={`shoe-art shoe-art-${originalIndex + 1}`} style={{ '--shoe-accent': shoe.accent }}>
+                      <span className="shoe-art-index">MODEL 0{originalIndex + 1}</span>
+                      <span className="shoe-art-caption">LIHAT DETAIL <span aria-hidden="true">↗</span></span>
+                      <img
+                        className="catalog-product-image"
+                        src={shoe.image}
+                        alt={`Foto ${shoe.name}`}
+                        loading="lazy"
+                      />
+                    </div>
+                    <div className="store-card-copy">
+                      <div className="store-card-category">{shoe.category}</div>
+                      <div className="store-card-title-row">
+                        <div>
+                          <h3>{shoe.name}</h3>
+                          <p>{shoe.tagline}</p>
+                        </div>
+                      </div>
+                      <div className="catalog-product-meta">
+                        <span>{shoe.specs[0][1]}</span>
+                        <span>
+                          {shoe.sizeOptions?.length
+                            ? `Ukuran ${shoe.sizeRange}`
+                            : 'Panduan ukuran belum tersedia dari aset'}
+                        </span>
+                      </div>
+                      <div className="catalog-product-bottom">
+                        <span className="catalog-product-price">
+                          {shoe.priceDetails
+                            ? 'Status harga resmi Indonesia'
+                            : shoe.price
+                              ? 'Harga referensi'
+                              : 'Harga belum tersedia'}
+                          {shoe.price && <strong>{formatPrice(shoe.price)}</strong>}
+                          {(shoe.priceDetails || shoe.priceNote || !shoe.price) && (
+                            <small>
+                              {shoe.priceNote ? 'Harga referensi, bukan harga resmi SKU' : 'Lihat sumber dan penjelasan di detail produk'}
+                            </small>
+                          )}
+                        </span>
+                        <ul className="store-card-colors" aria-label={`Warna pada model digital ${shoe.name}`}>
+                          {shoe.modelColors.map((color) => (
+                            <li key={color.name}>
+                              <span
+                                className="shoe-color-swatch"
+                                style={{ '--swatch-color': color.hex }}
+                                title={color.name}
+                              />
+                              <span className="store-card-color-name">{color.name}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    className={`store-compare-toggle catalog-compare-toggle ${compareIds.includes(shoe.id) ? 'is-selected' : ''}`}
+                    type="button"
+                    aria-pressed={compareIds.includes(shoe.id)}
+                    disabled={!compareIds.includes(shoe.id) && compareIds.length >= 2}
+                    onClick={() => toggleCompare(shoe.id)}
+                  >
+                    <span aria-hidden="true">{compareIds.includes(shoe.id) ? '✓' : '+'}</span>
+                    {compareIds.includes(shoe.id) ? 'Dipilih untuk dibandingkan' : 'Pilih untuk dibandingkan'}
+                  </button>
+                </article>
+              );
+            })}
+          </div>
+        )}
         {compareIds.length > 0 && (
           <div className="store-compare-bar" aria-live="polite">
             <p>
