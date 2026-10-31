@@ -182,10 +182,10 @@ function ShoeDetailPage({ shoe, onBack, onCompare, onAddToCart, onBuyNow, onStar
                 <button
                   type="button"
                   className="btn-switch-to-3d"
-                  onClick={() => setViewMode('3d')}
-                  title="Aktifkan Model 3D Sepatu Ini"
+                  onClick={() => setIsScannerOpen(true)}
+                  title="Pindai barcode untuk membuka model 3D"
                 >
-                  <span>📦 Buka Model 3D</span>
+                  <span>📷 Scan Barcode untuk 3D</span>
                   <span aria-hidden="true">→</span>
                 </button>
               </div>
@@ -202,7 +202,6 @@ function ShoeDetailPage({ shoe, onBack, onCompare, onAddToCart, onBuyNow, onStar
               {/* Kartu Barcode Sepatu (Scan untuk Memunculkan 3D) */}
               <ShoeBarcodeCard
                 shoe={shoe}
-                onUnlock3D={() => setViewMode('3d')}
                 onOpenScanner={() => setIsScannerOpen(true)}
               />
             </div>

@@ -250,16 +250,6 @@ function BarcodeScannerModal({ isOpen, onClose, onScanSuccess }) {
     }
   };
 
-  const handleSelectQuickBarcode = (shoeId) => {
-    const matched = shoes.find((s) => s.id === shoeId) || shoes[0];
-    setDetectedShoe(matched);
-    setIsProcessing(true);
-    setTimeout(() => {
-      onScanSuccess(matched.id);
-      onClose();
-    }, 600);
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -374,24 +364,6 @@ function BarcodeScannerModal({ isOpen, onClose, onScanSuccess }) {
           <p>
             Arahkan kamera ke <strong>QR Code atau Barcode</strong> sepatu untuk membuka model 3D interaktif.
           </p>
-        </div>
-
-        {/* Quick Testing Barcode Selector */}
-        <div className="barcode-quick-select-box">
-          <span className="barcode-quick-title">⚡ Uji Coba Cepat Pilihan Barcode Produk:</span>
-          <div className="barcode-quick-list">
-            {shoes.map((shoe) => (
-              <button
-                key={shoe.id}
-                type="button"
-                className="barcode-quick-pill"
-                onClick={() => handleSelectQuickBarcode(shoe.id)}
-              >
-                <span>👟 {shoe.name}</span>
-                <small>{PRODUCT_BARCODES[shoe.id]?.sku || 'SKU'}</small>
-              </button>
-            ))}
-          </div>
         </div>
       </div>
     </div>

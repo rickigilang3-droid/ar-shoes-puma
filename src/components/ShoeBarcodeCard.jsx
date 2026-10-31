@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
 import { getBarcodeInfo } from '../data/productBarcodes';
 
-function ShoeBarcodeCard({ shoe, onUnlock3D, onOpenScanner }) {
+function ShoeBarcodeCard({ shoe, onOpenScanner }) {
   const barcode = getBarcodeInfo(shoe.id);
   const [activeTab, setActiveTab] = useState('qr'); // 'qr' | 'barcode'
   const [qrDataUrl, setQrDataUrl] = useState('');
@@ -169,28 +169,18 @@ function ShoeBarcodeCard({ shoe, onUnlock3D, onOpenScanner }) {
       <div className="shoe-barcode-actions">
         <button
           type="button"
-          className="btn-unlock-3d"
-          onClick={onUnlock3D}
-          title="Buka tampilan model 3D sepatu ini di layar"
-        >
-          <span className="btn-icon">✨</span>
-          <span>Buka Model 3D Langsung</span>
-        </button>
-
-        <button
-          type="button"
-          className="btn-scan-barcode"
+          className="btn-scan-barcode-primary"
           onClick={onOpenScanner}
-          title="Buka kamera untuk scan barcode / QR sepatu"
+          title="Pindai barcode produk ini untuk membuka model 3D"
         >
           <span className="btn-icon">📷</span>
-          <span>Scan via Kamera</span>
+          <span>Pindai Barcode untuk Akses Model 3D</span>
         </button>
       </div>
 
       <div className="shoe-barcode-footer-note">
         <small>
-          💡 <strong>Tips:</strong> Anda bisa mengarahkan kamera HP ke QR Code di atas untuk membuka model 3D secara instan di HP, atau klik tombol <em>Buka Model 3D Langsung</em>.
+          🔒 <strong>Akses 3D Terkunci:</strong> Model 3D interaktif 360° hanya dapat diakses dengan memindai QR Code / Barcode produk ini menggunakan kamera HP Anda.
         </small>
       </div>
 
