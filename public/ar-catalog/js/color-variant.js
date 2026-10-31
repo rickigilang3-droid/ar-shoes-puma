@@ -69,3 +69,4 @@ AFRAME.registerComponent('color-customizer', {
     }
   },
 });
+

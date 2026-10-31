@@ -61,6 +61,44 @@ https://<IP-komputer-kamu>:5173
 3. Download file `.mind` yang dihasilkan
 4. Untuk demo AR, taruh file di `public/targets/shoe-qr.mind`; gambar target yang ditampilkan tersedia di `public/targets/shoe-qr.png`
 
+## Demo Alternatif AR.js NFT
+
+Halaman standalone A-Frame + AR.js tersedia di `/arjs-nft.html`. Halaman ini memuat
+`public/models/puma_suede.glb` dan mencari target dengan prefix
+`public/targets/nft/shoe-target`. Siapkan tiga file target hasil kompilasi NFT dengan
+nama `shoe-target.iset`, `shoe-target.fset`, dan `shoe-target.fset3` di folder tersebut.
+
+File `.mind` yang dipakai MindAR **tidak kompatibel** dengan AR.js NFT. Gambar sumber
+`public/targets/shoe-target.png` perlu dikompilasi ke format NFT terlebih dahulu; jangan
+mengganti ekstensi atau memakai file `.mind` sebagai target NFT. Jalankan halaman lewat
+HTTPS atau `localhost` agar browser mengizinkan kamera.
+
+### Pembagian Modul dan Implementasi
+
+- `public/arjs-nft.html`: struktur scene, target NFT, GLB, lampu, dan kontrol aksesibel.
+- `public/arjs-nft.css`: HUD dan tata letak responsif untuk kamera ponsel maupun desktop.
+- `public/arjs-nft.js`: komponen A-Frame untuk fit model, rotasi, zoom, warna, dan status tracking.
+
+Langkah implementasi:
+
+1. Siapkan gambar target dengan kontras jelas dan detail unik yang tersebar di seluruh gambar.
+  Gambar `shoe-target.png` yang ada cukup kontras, tetapi bentuk geometrisnya berulang dan
+  detail lokalnya terbatas. Foto atau sketsa sepatu dengan tali, jahitan, dan kontur khas
+  biasanya memberi fitur pelacakan yang lebih kuat; hindari gambar polos, blur, refleksi,
+  pola berulang, serta area kosong yang luas.
+2. Kompilasi gambar sumber menjadi paket NFT AR.js (`.iset`, `.fset`, `.fset3`) dan simpan
+  dengan prefix yang sama seperti nilai `url` pada `<a-nft>`.
+3. Ekspor model sepatu sebagai `.glb` untuk menyatukan mesh, material, dan tekstur. `.gltf`
+  juga didukung, tetapi file tekstur dan binari pendampingnya harus ikut tersedia.
+4. Sesuaikan model di HTML: ubah `src` GLB, lalu set `fit-shoe` `targetSize` dan rotasi awal
+  agar sepatu berada di tengah marker dan menghadap ke arah yang diinginkan.
+5. Jalankan `npm run dev`, buka `/arjs-nft.html` lewat HTTPS atau `localhost`, izinkan kamera,
+  lalu uji marker dengan jarak, cahaya, dan sudut yang berbeda.
+
+Kontrol di halaman mengubah rotasi per 15 derajat, zoom pada rentang 60–180%, dan warna material
+GLB. Warna merupakan tint pada material yang ada, jadi hasil tiap varian mengikuti tekstur dan
+material bawaan model.
+
 ## Cara Mendapatkan Model 3D Sepatu (.glb)
 
 - **Sketchfab**: https://sketchfab.com/search?q=shoe&type=models (filter: Free + Downloadable)

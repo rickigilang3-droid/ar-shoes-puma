@@ -116,3 +116,4 @@ export const EWALLET_CHANNELS = [
     description: 'Transfer saldo ShopeePay atau scan QRIS via aplikasi Shopee',
   },
 ];
+

@@ -225,7 +225,7 @@ function App() {
   } else if (!shoe) {
     page = (
       <ShoeCatalogPage
-        onOpenShoe={(id) => navigate(`/shoe/${id}`)}
+        onOpenShoe={(id, viewMode) => navigate(viewMode ? `/shoe/${encodeURIComponent(id)}?view=${encodeURIComponent(viewMode)}` : `/shoe/${encodeURIComponent(id)}`)}
         onStartAR={() => navigate('/ar')}
         onCompare={(leftId, rightId) => navigate(`/compare?left=${encodeURIComponent(leftId)}&right=${encodeURIComponent(rightId)}`)}
       />

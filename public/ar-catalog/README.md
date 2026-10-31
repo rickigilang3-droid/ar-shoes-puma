@@ -22,3 +22,4 @@ Implementasi frontend modular untuk katalog sepatu interaktif berbasis Web Augme
 ## 3. Optimasi Format Aset & Marker
 - **Format:** Gunakan format `.glb` terkompresi DRACO untuk menjaga ukuran file tetap di bawah 3 MB.
 - **Marker:** Gunakan gambar dengan kontras tinggi (>60%) dan kepadatan titik fitur tajam (*Harris corners*) agar pelacakan tidak mudah lepas (*tracking loss*).
+

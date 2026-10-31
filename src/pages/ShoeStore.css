@@ -6444,3 +6444,634 @@
     height: 190px;
   }
 }
+
+/* ==========================================================================
+   BARCODE & 2D PHOTO MODE STYLING
+   ========================================================================== */
+
+/* Header Scanner Button */
+.store-header-scanner-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.52rem 0.85rem;
+  background: #0f172a;
+  color: #f8fafc;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+
+.store-header-scanner-btn:hover {
+  background: #1e293b;
+  color: #38bdf8;
+  border-color: #38bdf8;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(56, 189, 248, 0.25);
+}
+
+.store-header-scanner-btn .scanner-icon {
+  font-size: 0.85rem;
+}
+
+/* 2D Photo Stage (Default Product View) */
+.shoe-photo-stage {
+  position: relative;
+  width: 100%;
+  min-height: 480px;
+  background: radial-gradient(circle at 50% 30%, #ffffff 0%, #ecefe8 100%);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.shoe-photo-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  z-index: 2;
+}
+
+.shoe-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  background: rgba(15, 23, 42, 0.07);
+  color: #1e293b;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+}
+
+.shoe-mode-badge .badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+.btn-switch-to-3d {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 999px;
+  background: #0f172a;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18);
+}
+
+.btn-switch-to-3d:hover {
+  background: var(--shoe-accent, #38bdf8);
+  color: #0f172a;
+  border-color: transparent;
+  transform: translateY(-1px);
+}
+
+.shoe-photo-frame {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  min-height: 280px;
+}
+
+.shoe-detail-main-photo {
+  max-width: 88%;
+  max-height: 340px;
+  object-fit: contain;
+  filter: drop-shadow(0 24px 32px rgba(15, 23, 42, 0.18));
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.shoe-photo-stage:hover .shoe-detail-main-photo {
+  transform: scale(1.03) rotate(-1deg);
+}
+
+/* 3D View Mode Tab Switcher Bar */
+.shoe-view-mode-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.view-mode-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.48rem 0.9rem;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: #ffffff;
+  color: #475569;
+  border: 1px solid rgba(21, 23, 19, 0.15);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.view-mode-tab:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.view-mode-tab.active {
+  background: #0f172a;
+  color: #38bdf8;
+  border-color: #0f172a;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15);
+}
+
+.view-mode-tab.tab-scanner {
+  margin-left: auto;
+  background: #f8fafc;
+  border-style: dashed;
+}
+
+.view-mode-tab.tab-scanner:hover {
+  background: #e2e8f0;
+  border-color: #0f172a;
+}
+
+/* Shoe Barcode Card */
+.shoe-barcode-card {
+  margin-top: 1rem;
+  background: #ffffff;
+  border: 1px solid rgba(21, 23, 19, 0.14);
+  border-radius: 14px;
+  padding: 1.1rem 1.25rem;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  z-index: 2;
+}
+
+.shoe-barcode-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.shoe-barcode-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.barcode-chip-tag {
+  background: #0f172a;
+  color: #ffffff;
+  font-size: 0.58rem;
+  font-weight: 800;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  letter-spacing: 0.08em;
+}
+
+.shoe-barcode-brand strong {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: #0f172a;
+}
+
+.barcode-status-pill {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #059669;
+  background: #ecfdf5;
+  border: 1px solid rgba(5, 150, 105, 0.2);
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+}
+
+.shoe-barcode-graphic-box {
+  background: #fafaf9;
+  border: 1px dashed rgba(21, 23, 19, 0.18);
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0.85rem;
+}
+
+.shoe-barcode-svg {
+  width: 100%;
+  max-width: 280px;
+  height: 64px;
+}
+
+.shoe-barcode-details {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: #334155;
+  padding: 0.45rem 0;
+  border-top: 1px solid rgba(21, 23, 19, 0.06);
+  border-bottom: 1px solid rgba(21, 23, 19, 0.06);
+  margin-bottom: 0.95rem;
+}
+
+.shoe-barcode-label {
+  color: #64748b;
+  margin-right: 0.35rem;
+}
+
+.shoe-barcode-actions {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 0.65rem;
+  margin-bottom: 0.75rem;
+}
+
+.btn-unlock-3d {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  background: #0f172a;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.65rem 0.85rem;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+}
+
+.btn-unlock-3d:hover {
+  background: #1e293b;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.3);
+}
+
+.btn-scan-barcode {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  background: #f1f5f9;
+  color: #0f172a;
+  border: 1px solid rgba(21, 23, 19, 0.15);
+  border-radius: 8px;
+  padding: 0.65rem 0.85rem;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-scan-barcode:hover {
+  background: #e2e8f0;
+  border-color: #0f172a;
+}
+
+.shoe-barcode-footer-note {
+  font-size: 0.65rem;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+/* Barcode Scanner Modal */
+.barcode-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  animation: modalFadeIn 0.25s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.barcode-modal-card {
+  width: 100%;
+  max-width: 480px;
+  background: #0f172a;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75);
+}
+
+.barcode-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+}
+
+.barcode-modal-tag {
+  display: inline-block;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #38bdf8;
+  margin-bottom: 0.25rem;
+}
+
+.barcode-modal-header h3 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0;
+  color: #ffffff;
+}
+
+.barcode-modal-close {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: all 0.2s ease;
+}
+
+.barcode-modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.barcode-scanner-viewport {
+  position: relative;
+  width: 100%;
+  height: 270px;
+  background: #000000;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.barcode-video-feed {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Scanner HUD & Laser Beam */
+.barcode-scanner-hud {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 220px;
+  height: 160px;
+  pointer-events: none;
+}
+
+.barcode-scan-bracket {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-color: #38bdf8;
+  border-style: solid;
+}
+
+.barcode-scan-bracket.tl {
+  top: 0;
+  left: 0;
+  border-width: 3px 0 0 3px;
+  border-top-left-radius: 6px;
+}
+
+.barcode-scan-bracket.tr {
+  top: 0;
+  right: 0;
+  border-width: 3px 3px 0 0;
+  border-top-right-radius: 6px;
+}
+
+.barcode-scan-bracket.bl {
+  bottom: 0;
+  left: 0;
+  border-width: 0 0 3px 3px;
+  border-bottom-left-radius: 6px;
+}
+
+.barcode-scan-bracket.br {
+  bottom: 0;
+  right: 0;
+  border-width: 0 3px 3px 0;
+  border-bottom-right-radius: 6px;
+}
+
+.barcode-laser-beam {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #38bdf8, #ffffff, #38bdf8, transparent);
+  box-shadow: 0 0 12px #38bdf8, 0 0 20px #38bdf8;
+  animation: laserSweep 2s ease-in-out infinite alternate;
+}
+
+@keyframes laserSweep {
+  0% { top: 6px; opacity: 0.6; }
+  100% { top: calc(100% - 8px); opacity: 1; }
+}
+
+/* Success overlay */
+.barcode-success-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(16, 185, 129, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.5rem;
+  color: #ffffff;
+  animation: successPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes successPop {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.barcode-success-icon {
+  font-size: 2.2rem;
+  font-weight: 900;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #10b981;
+  display: grid;
+  place-items: center;
+  margin-bottom: 0.65rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.barcode-success-overlay h4 {
+  margin: 0 0 0.3rem;
+  font-size: 1.1rem;
+}
+
+.barcode-success-overlay p {
+  margin: 0;
+  font-size: 0.76rem;
+  opacity: 0.95;
+}
+
+/* Notice if camera inactive */
+.barcode-camera-notice {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.92);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.5rem;
+  color: #cbd5e1;
+}
+
+.barcode-camera-notice span {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.barcode-camera-notice p {
+  font-size: 0.8rem;
+  color: #f1f5f9;
+  margin: 0 0 0.4rem;
+}
+
+.barcode-camera-notice small {
+  font-size: 0.68rem;
+  color: #94a3b8;
+}
+
+/* Instructions */
+.barcode-instruction-text {
+  margin: 0.95rem 0;
+  font-size: 0.73rem;
+  color: #94a3b8;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.barcode-instruction-text strong {
+  color: #f8fafc;
+}
+
+/* Quick Barcode Testing Box */
+.barcode-quick-select-box {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.9rem;
+}
+
+.barcode-quick-title {
+  display: block;
+  font-size: 0.67rem;
+  font-weight: 700;
+  color: #38bdf8;
+  margin-bottom: 0.65rem;
+}
+
+.barcode-quick-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  max-height: 130px;
+  overflow-y: auto;
+}
+
+.barcode-quick-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 0.48rem 0.75rem;
+  color: #f8fafc;
+  font-family: inherit;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  text-align: left;
+}
+
+.barcode-quick-pill:hover {
+  background: #1e293b;
+  border-color: #38bdf8;
+  color: #38bdf8;
+  transform: translateX(2px);
+}
+
+.barcode-quick-pill small {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  color: #94a3b8;
+}
+
+@media (max-width: 640px) {
+  .shoe-photo-stage {
+    min-height: 400px;
+    padding: 1rem;
+  }
+  .shoe-barcode-actions {
+    grid-template-columns: 1fr;
+  }
+  .shoe-barcode-details {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .view-mode-tab.tab-scanner {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+}

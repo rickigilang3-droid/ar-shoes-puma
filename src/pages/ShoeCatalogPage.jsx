@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import './ShoeStore.css';
 import { formatPrice, shoes } from '../data/products';
+import BarcodeScannerModal from '../components/BarcodeScannerModal';
 
 function ShoeCatalogPage({ onOpenShoe, onStartAR, onCompare }) {
   const [compareIds, setCompareIds] = useState([]);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
 
   const toggleCompare = (shoeId) => {
     setCompareIds((current) => {
@@ -23,6 +25,15 @@ function ShoeCatalogPage({ onOpenShoe, onStartAR, onCompare }) {
         <nav className="store-header-nav catalog-header-nav" aria-label="Navigasi utama">
           <a className="catalog-nav-link" href="#collection">Koleksi</a>
           <a className="catalog-nav-link" href="#experience">Pengalaman</a>
+          <button
+            className="store-header-scanner-btn"
+            type="button"
+            onClick={() => setIsScannerOpen(true)}
+            title="Scan barcode produk untuk membuka model 3D"
+          >
+            <span className="scanner-icon" aria-hidden="true">📷</span>
+            <span>Scan Barcode 3D</span>
+          </button>
           <button className="store-header-ar catalog-ar-button" type="button" onClick={onStartAR}>
             <span aria-hidden="true">◉</span> Buka Mode AR
           </button>
@@ -188,6 +199,16 @@ function ShoeCatalogPage({ onOpenShoe, onStartAR, onCompare }) {
         <span>EXPLORE THE FORM · UNDERSTAND THE DETAILS</span>
         <a href="#collection">KEMBALI KE KOLEKSI ↑</a>
       </footer>
+
+      {/* Modal Scanner Barcode Kamera */}
+      <BarcodeScannerModal
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        onScanSuccess={(scannedShoeId) => {
+          setIsScannerOpen(false);
+          onOpenShoe(scannedShoeId, '3d');
+        }}
+      />
     </main>
   );
 }

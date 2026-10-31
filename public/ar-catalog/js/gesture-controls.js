@@ -140,3 +140,4 @@ AFRAME.registerComponent('gesture-controls', {
     window.removeEventListener('mouseup', this.onMouseUp);
   },
 });
+
