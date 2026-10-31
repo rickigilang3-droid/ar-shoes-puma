@@ -11,8 +11,7 @@ function BarcodeScannerModal({ isOpen, onClose, onScanSuccess }) {
   const nativeCameraInputRef = useRef(null);
   const galleryInputRef = useRef(null);
 
-  const [hasCamera, setHasCamera] = useState(true);
-  const [cameraError, setCameraError] = useState(null);
+  const [isLiveActive, setIsLiveActive] = useState(false);
   const [detectedShoe, setDetectedShoe] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [photoScanning, setPhotoScanning] = useState(false);
@@ -26,10 +25,10 @@ function BarcodeScannerModal({ isOpen, onClose, onScanSuccess }) {
     }
 
     setDetectedShoe(null);
-    setCameraError(null);
     setIsProcessing(false);
     setPhotoScanning(false);
     setScanMessage('');
+    setIsLiveActive(false);
 
     let active = true;
 
@@ -37,23 +36,18 @@ function BarcodeScannerModal({ isOpen, onClose, onScanSuccess }) {
       // Check if navigator.mediaDevices is supported (requires HTTPS or localhost on mobile)
       if (!navigator.mediaDevices?.getUserMedia) {
         if (!active) return;
-        setHasCamera(false);
-        setCameraError(
-          'Browser HP membatasi live video stream tanpa HTTPS. Gunakan tombol "Buka Kamera HP" di bawah untuk memotret barcode langsung.'
-        );
+        setIsLiveActive(false);
         return;
       }
 
       try {
         let stream;
         try {
-          // Attempt back camera first
           stream = await navigator.mediaDevices.getUserMedia({
             video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
             audio: false,
           });
         } catch {
-          // Fallback to basic video constraint
           stream = await navigator.mediaDevices.getUserMedia({
             video: true,
             audio: false,
@@ -70,17 +64,13 @@ function BarcodeScannerModal({ isOpen, onClose, onScanSuccess }) {
           videoRef.current.srcObject = stream;
           videoRef.current.setAttribute('playsinline', 'true');
           await videoRef.current.play();
-          setHasCamera(true);
+          setIsLiveActive(true);
           startScanningLoop();
         }
       } catch (err) {
         if (!active) return;
-        setHasCamera(false);
-        if (err.name === 'NotAllowedError') {
-          setCameraError('Izin akses kamera ditolak di browser. Gunakan tombol "Buka Kamera HP" di bawah.');
-        } else {
-          setCameraError(err.message || 'Kamera belum dapat dibuka.');
-        }
+        setIsLiveActive(false);
+        console.warn('[Camera live stream unavailable, using native snapshot capture]:', err.message);
       }
     }
 
@@ -104,6 +94,7 @@ function BarcodeScannerModal({ isOpen, onClose, onScanSuccess }) {
     if (videoRef.current) {
       videoRef.current.srcObject = null;
     }
+    setIsLiveActive(false);
   };
 
   // Continuous frame scanning loop for live video
@@ -235,10 +226,10 @@ function BarcodeScannerModal({ isOpen, onClose, onScanSuccess }) {
           setPhotoScanning(false);
 
           if (detected) {
-            setScanMessage('✓ Barcode ditemukan!');
+            setScanMessage('✓ Barcode terverifikasi!');
             handleCodeDetected(detected);
           } else {
-            setScanMessage('⚠️ Barcode / QR belum terdeteksi pada foto. Pastikan gambar jelas dan coba lagi.');
+            setScanMessage('⚠️ Barcode / QR belum terdeteksi. Pastikan kode berada di tengah foto dan tidak buram.');
           }
         };
         img.src = e.target.result;
@@ -254,7 +245,7 @@ function BarcodeScannerModal({ isOpen, onClose, onScanSuccess }) {
 
   return (
     <div className="barcode-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="barcode-modal-title">
-      {/* Hidden native camera capture & gallery inputs */}
+      {/* Hidden file inputs: one for native camera, one for gallery */}
       <input
         ref={nativeCameraInputRef}
         type="file"
@@ -272,30 +263,57 @@ function BarcodeScannerModal({ isOpen, onClose, onScanSuccess }) {
       />
 
       <div className="barcode-modal-card">
-        {/* Header */}
+        {/* Modal Header */}
         <div className="barcode-modal-header">
-          <div>
-            <span className="barcode-modal-tag">BARCODE SCANNER 3D</span>
+          <div className="barcode-header-info">
+            <span className="barcode-modal-tag">AUTHENTICATION SCANNER</span>
             <h3 id="barcode-modal-title">Pindai Barcode / QR Produk</h3>
+            <p className="barcode-modal-subtitle">
+              Pindai kode fisik untuk membuka Model 3D interaktif 360°
+            </p>
           </div>
           <button type="button" className="barcode-modal-close" onClick={onClose} aria-label="Tutup pemindai barcode">
             ✕
           </button>
         </div>
 
-        {/* Viewfinder Video Area */}
+        {/* Viewfinder Main Stage */}
         <div className="barcode-scanner-viewport">
-          <video ref={videoRef} className="barcode-video-feed" playsInline muted autoPlay />
+          <video
+            ref={videoRef}
+            className={`barcode-video-feed ${isLiveActive ? 'is-live' : ''}`}
+            playsInline
+            muted
+            autoPlay
+          />
           <canvas ref={canvasRef} style={{ display: 'none' }} />
 
-          {/* Scanner Overlay HUD */}
-          {hasCamera && !cameraError && (
+          {/* Mode 1: Live Stream HUD with Laser Sweep */}
+          {isLiveActive && (
             <div className="barcode-scanner-hud">
               <div className="barcode-scan-bracket tl" />
               <div className="barcode-scan-bracket tr" />
               <div className="barcode-scan-bracket bl" />
               <div className="barcode-scan-bracket br" />
               <div className="barcode-laser-beam" />
+              <span className="barcode-live-hud-badge">LIVE SCANNING</span>
+            </div>
+          )}
+
+          {/* Mode 2: Native Camera Hub (when live stream is inactive / mobile HTTP) */}
+          {!isLiveActive && (
+            <div className="barcode-native-hub">
+              <div className="barcode-hub-target-box">
+                <div className="barcode-hub-bracket tl" />
+                <div className="barcode-hub-bracket tr" />
+                <div className="barcode-hub-bracket bl" />
+                <div className="barcode-hub-bracket br" />
+                <div className="barcode-hub-center-icon">
+                  <span className="hub-camera-emoji" aria-hidden="true">📷</span>
+                </div>
+              </div>
+              <h4>Arahkan Kamera ke Barcode / QR</h4>
+              <p>Ambil foto barcode atau QR sepatu untuk membuka model 3D secara instan.</p>
             </div>
           )}
 
@@ -308,62 +326,62 @@ function BarcodeScannerModal({ isOpen, onClose, onScanSuccess }) {
             </div>
           )}
 
-          {/* Fallback / Camera Notice on Mobile HTTP */}
-          {cameraError && (
-            <div className="barcode-camera-notice">
-              <span className="camera-notice-icon">📷</span>
-              <p className="camera-notice-text">{cameraError}</p>
-              <button
-                type="button"
-                className="btn-take-photo-primary"
-                onClick={() => nativeCameraInputRef.current?.click()}
-              >
-                <span>📸 Buka Kamera HP Sekarang</span>
-              </button>
-            </div>
-          )}
-
           {/* Photo scanning loading state */}
           {photoScanning && (
             <div className="barcode-scanning-overlay">
               <div className="barcode-spinner" />
-              <p>Menganalisis foto…</p>
+              <p>Menganalisis barcode dari foto…</p>
             </div>
           )}
         </div>
 
-        {/* Scan Message / Tip */}
+        {/* Scan Status / Warning Banner */}
         {scanMessage && (
           <div className="barcode-status-banner">
             <p>{scanMessage}</p>
           </div>
         )}
 
-        {/* Mobile Camera & Gallery Action Buttons */}
-        <div className="barcode-native-actions">
+        {/* Primary Action Buttons (Sleek, No Duplicates) */}
+        <div className="barcode-action-group">
           <button
             type="button"
-            className="btn-native-action primary"
+            className="btn-scanner-primary"
             onClick={() => nativeCameraInputRef.current?.click()}
             title="Buka kamera HP untuk memotret barcode langsung"
           >
-            <span>📸 Ambil Foto Barcode</span>
+            <span className="btn-action-icon" aria-hidden="true">📸</span>
+            <div className="btn-action-text">
+              <strong>Ambil Foto Barcode</strong>
+              <small>Gunakan kamera HP langsung</small>
+            </div>
           </button>
+
           <button
             type="button"
-            className="btn-native-action secondary"
+            className="btn-scanner-secondary"
             onClick={() => galleryInputRef.current?.click()}
-            title="Pilih gambar barcode dari galeri"
+            title="Pilih gambar atau screenshot dari galeri"
           >
-            <span>🖼️ Pilih dari Galeri</span>
+            <span className="btn-action-icon" aria-hidden="true">🖼️</span>
+            <div className="btn-action-text">
+              <strong>Pilih dari Galeri</strong>
+              <small>Unggah file foto / screenshot</small>
+            </div>
           </button>
         </div>
 
-        {/* Instructional text */}
-        <div className="barcode-instruction-text">
-          <p>
-            Arahkan kamera ke <strong>QR Code atau Barcode</strong> sepatu untuk membuka model 3D interaktif.
-          </p>
+        {/* Guided Steps Footer */}
+        <div className="barcode-guided-footer">
+          <div className="guided-step-item">
+            <span className="guided-step-num">1</span>
+            <span>Jepret QR Code di layar / label sepatu</span>
+          </div>
+          <span className="guided-step-arrow" aria-hidden="true">→</span>
+          <div className="guided-step-item">
+            <span className="guided-step-num">2</span>
+            <span>Model 3D 360° otomatis terbuka</span>
+          </div>
         </div>
       </div>
     </div>
