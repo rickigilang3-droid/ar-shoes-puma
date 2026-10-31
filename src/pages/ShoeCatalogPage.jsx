@@ -245,8 +245,8 @@ function ShoeCatalogPage({ onOpenShoe, onStartAR, onCompare }) {
                     disabled={!compareIds.includes(shoe.id) && compareIds.length >= 2}
                     onClick={() => toggleCompare(shoe.id)}
                   >
-                    <span aria-hidden="true">{compareIds.includes(shoe.id) ? '✓' : '+'}</span>
-                    {compareIds.includes(shoe.id) ? 'Dipilih untuk dibandingkan' : 'Pilih untuk dibandingkan'}
+                    <span className="compare-toggle-icon" aria-hidden="true">{compareIds.includes(shoe.id) ? '✓' : '+'}</span>
+                    <span className="compare-toggle-label">{compareIds.includes(shoe.id) ? 'Dipilih untuk dibandingkan' : 'Pilih untuk dibandingkan'}</span>
                   </button>
                 </article>
               );
