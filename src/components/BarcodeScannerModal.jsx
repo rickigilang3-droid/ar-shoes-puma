@@ -8,11 +8,15 @@ function BarcodeScannerModal({ isOpen, onClose, onScanSuccess }) {
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
   const animFrameRef = useRef(null);
+  const nativeCameraInputRef = useRef(null);
+  const galleryInputRef = useRef(null);
 
   const [hasCamera, setHasCamera] = useState(true);
   const [cameraError, setCameraError] = useState(null);
   const [detectedShoe, setDetectedShoe] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [photoScanning, setPhotoScanning] = useState(false);
+  const [scanMessage, setScanMessage] = useState('');
 
   // Initialize camera stream when modal opens
   useEffect(() => {
@@ -24,19 +28,37 @@ function BarcodeScannerModal({ isOpen, onClose, onScanSuccess }) {
     setDetectedShoe(null);
     setCameraError(null);
     setIsProcessing(false);
+    setPhotoScanning(false);
+    setScanMessage('');
 
     let active = true;
 
     async function startCamera() {
-      try {
-        if (!navigator.mediaDevices?.getUserMedia) {
-          throw new Error('Kamera tidak didukung pada browser ini.');
-        }
+      // Check if navigator.mediaDevices is supported (requires HTTPS or localhost on mobile)
+      if (!navigator.mediaDevices?.getUserMedia) {
+        if (!active) return;
+        setHasCamera(false);
+        setCameraError(
+          'Browser HP membatasi live video stream tanpa HTTPS. Gunakan tombol "Buka Kamera HP" di bawah untuk memotret barcode langsung.'
+        );
+        return;
+      }
 
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
-          audio: false,
-        });
+      try {
+        let stream;
+        try {
+          // Attempt back camera first
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
+            audio: false,
+          });
+        } catch {
+          // Fallback to basic video constraint
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false,
+          });
+        }
 
         if (!active) {
           stream.getTracks().forEach((t) => t.stop());
@@ -48,12 +70,17 @@ function BarcodeScannerModal({ isOpen, onClose, onScanSuccess }) {
           videoRef.current.srcObject = stream;
           videoRef.current.setAttribute('playsinline', 'true');
           await videoRef.current.play();
+          setHasCamera(true);
           startScanningLoop();
         }
       } catch (err) {
         if (!active) return;
         setHasCamera(false);
-        setCameraError(err.message || 'Izin kamera belum diberikan.');
+        if (err.name === 'NotAllowedError') {
+          setCameraError('Izin akses kamera ditolak di browser. Gunakan tombol "Buka Kamera HP" di bawah.');
+        } else {
+          setCameraError(err.message || 'Kamera belum dapat dibuka.');
+        }
       }
     }
 
@@ -79,7 +106,7 @@ function BarcodeScannerModal({ isOpen, onClose, onScanSuccess }) {
     }
   };
 
-  // Continuous frame scanning loop
+  // Continuous frame scanning loop for live video
   const startScanningLoop = () => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
@@ -113,31 +140,35 @@ function BarcodeScannerModal({ isOpen, onClose, onScanSuccess }) {
     animFrameRef.current = requestAnimationFrame(scanFrame);
   };
 
+  // Decode code string into shoe object
   const handleCodeDetected = (rawCode) => {
     if (isProcessing) return;
     setIsProcessing(true);
 
-    // Identify shoe from URL or raw text or barcode
     let matchedShoe = null;
 
-    // Check if it's a URL like /shoe/nike-air-force-1
+    // 1. Check if it's a URL like /shoe/nike-air-force-1 or contains ?view=3d
     const matchShoePath = rawCode.match(/\/shoe\/([^/?#]+)/);
     if (matchShoePath) {
       const id = decodeURIComponent(matchShoePath[1]);
       matchedShoe = shoes.find((s) => s.id === id);
     }
 
-    // Check by SKU or barcode number
+    // 2. Check by SKU, Barcode Number, or ID
     if (!matchedShoe) {
       for (const [shoeId, info] of Object.entries(PRODUCT_BARCODES)) {
-        if (rawCode.includes(info.sku) || rawCode.includes(info.barcodeNumber) || rawCode.includes(shoeId)) {
+        if (
+          rawCode.includes(info.sku) ||
+          rawCode.includes(info.barcodeNumber) ||
+          rawCode.includes(shoeId)
+        ) {
           matchedShoe = shoes.find((s) => s.id === shoeId);
           break;
         }
       }
     }
 
-    // Fallback: match by partial name or default to first shoe
+    // 3. Fallback: match by partial name or default to first shoe
     if (!matchedShoe) {
       matchedShoe = shoes.find((s) => rawCode.toLowerCase().includes(s.id.toLowerCase())) || shoes[0];
     }
@@ -152,7 +183,71 @@ function BarcodeScannerModal({ isOpen, onClose, onScanSuccess }) {
     setTimeout(() => {
       onScanSuccess(matchedShoe.id);
       onClose();
-    }, 1100);
+    }, 1000);
+  };
+
+  // Handle photo capture from Native Camera or Gallery
+  const handlePhotoUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setPhotoScanning(true);
+    setScanMessage('Menganalisis foto barcode…');
+
+    try {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = async () => {
+          let detected = null;
+
+          // 1. Try BarcodeDetector API if available (Chrome Android)
+          if ('BarcodeDetector' in window) {
+            try {
+              const detector = new window.BarcodeDetector({
+                formats: ['qr_code', 'code_128', 'code_39', 'ean_13', 'ean_8'],
+              });
+              const detectedCodes = await detector.detect(img);
+              if (detectedCodes && detectedCodes.length > 0 && detectedCodes[0].rawValue) {
+                detected = detectedCodes[0].rawValue;
+              }
+            } catch (err) {
+              console.warn('[BarcodeDetector warning]', err);
+            }
+          }
+
+          // 2. Fallback to jsQR
+          if (!detected) {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            ctx.drawImage(img, 0, 0);
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const qr = jsQR(imgData.data, imgData.width, imgData.height, {
+              inversionAttempts: 'attemptBoth',
+            });
+            if (qr && qr.data) {
+              detected = qr.data;
+            }
+          }
+
+          setPhotoScanning(false);
+
+          if (detected) {
+            setScanMessage('✓ Barcode ditemukan!');
+            handleCodeDetected(detected);
+          } else {
+            setScanMessage('⚠️ Barcode / QR belum terdeteksi pada foto. Pastikan gambar jelas dan coba lagi.');
+          }
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      setPhotoScanning(false);
+      setScanMessage('Gagal memproses foto: ' + err.message);
+    }
   };
 
   const handleSelectQuickBarcode = (shoeId) => {
@@ -162,19 +257,36 @@ function BarcodeScannerModal({ isOpen, onClose, onScanSuccess }) {
     setTimeout(() => {
       onScanSuccess(matched.id);
       onClose();
-    }, 800);
+    }, 600);
   };
 
   if (!isOpen) return null;
 
   return (
     <div className="barcode-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="barcode-modal-title">
+      {/* Hidden native camera capture & gallery inputs */}
+      <input
+        ref={nativeCameraInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        style={{ display: 'none' }}
+        onChange={handlePhotoUpload}
+      />
+      <input
+        ref={galleryInputRef}
+        type="file"
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={handlePhotoUpload}
+      />
+
       <div className="barcode-modal-card">
         {/* Header */}
         <div className="barcode-modal-header">
           <div>
             <span className="barcode-modal-tag">BARCODE SCANNER 3D</span>
-            <h3 id="barcode-modal-title">Pindai Barcode Produk</h3>
+            <h3 id="barcode-modal-title">Pindai Barcode / QR Produk</h3>
           </div>
           <button type="button" className="barcode-modal-close" onClick={onClose} aria-label="Tutup pemindai barcode">
             ✕
@@ -187,13 +299,15 @@ function BarcodeScannerModal({ isOpen, onClose, onScanSuccess }) {
           <canvas ref={canvasRef} style={{ display: 'none' }} />
 
           {/* Scanner Overlay HUD */}
-          <div className="barcode-scanner-hud">
-            <div className="barcode-scan-bracket tl" />
-            <div className="barcode-scan-bracket tr" />
-            <div className="barcode-scan-bracket bl" />
-            <div className="barcode-scan-bracket br" />
-            <div className="barcode-laser-beam" />
-          </div>
+          {hasCamera && !cameraError && (
+            <div className="barcode-scanner-hud">
+              <div className="barcode-scan-bracket tl" />
+              <div className="barcode-scan-bracket tr" />
+              <div className="barcode-scan-bracket bl" />
+              <div className="barcode-scan-bracket br" />
+              <div className="barcode-laser-beam" />
+            </div>
+          )}
 
           {/* Success Overlay when detected */}
           {detectedShoe && (
@@ -204,24 +318,65 @@ function BarcodeScannerModal({ isOpen, onClose, onScanSuccess }) {
             </div>
           )}
 
-          {/* Fallback if camera error */}
+          {/* Fallback / Camera Notice on Mobile HTTP */}
           {cameraError && (
             <div className="barcode-camera-notice">
-              <span>📷</span>
-              <p>{cameraError}</p>
-              <small>Anda tetap dapat memilih barcode sepatu di bawah ini untuk menguji coba.</small>
+              <span className="camera-notice-icon">📷</span>
+              <p className="camera-notice-text">{cameraError}</p>
+              <button
+                type="button"
+                className="btn-take-photo-primary"
+                onClick={() => nativeCameraInputRef.current?.click()}
+              >
+                <span>📸 Buka Kamera HP Sekarang</span>
+              </button>
             </div>
           )}
+
+          {/* Photo scanning loading state */}
+          {photoScanning && (
+            <div className="barcode-scanning-overlay">
+              <div className="barcode-spinner" />
+              <p>Menganalisis foto…</p>
+            </div>
+          )}
+        </div>
+
+        {/* Scan Message / Tip */}
+        {scanMessage && (
+          <div className="barcode-status-banner">
+            <p>{scanMessage}</p>
+          </div>
+        )}
+
+        {/* Mobile Camera & Gallery Action Buttons */}
+        <div className="barcode-native-actions">
+          <button
+            type="button"
+            className="btn-native-action primary"
+            onClick={() => nativeCameraInputRef.current?.click()}
+            title="Buka kamera HP untuk memotret barcode langsung"
+          >
+            <span>📸 Ambil Foto Barcode</span>
+          </button>
+          <button
+            type="button"
+            className="btn-native-action secondary"
+            onClick={() => galleryInputRef.current?.click()}
+            title="Pilih gambar barcode dari galeri"
+          >
+            <span>🖼️ Pilih dari Galeri</span>
+          </button>
         </div>
 
         {/* Instructional text */}
         <div className="barcode-instruction-text">
           <p>
-            Arahkan kamera ke <strong>Barcode atau QR Code</strong> sepatu untuk memunculkan model 3D interaktif secara langsung.
+            Arahkan kamera ke <strong>QR Code atau Barcode</strong> sepatu untuk membuka model 3D interaktif.
           </p>
         </div>
 
-        {/* Quick Barcode Selector (Untuk pengujian cepat di browser/laptop) */}
+        {/* Quick Testing Barcode Selector */}
         <div className="barcode-quick-select-box">
           <span className="barcode-quick-title">⚡ Uji Coba Cepat Pilihan Barcode Produk:</span>
           <div className="barcode-quick-list">

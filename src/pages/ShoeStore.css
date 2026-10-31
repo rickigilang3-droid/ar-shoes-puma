@@ -7075,3 +7075,336 @@
     justify-content: center;
   }
 }
+
+/* ==========================================================================
+   ENHANCED REAL QR CODE & MOBILE CAMERA SCANNER
+   ========================================================================== */
+
+/* Barcode Card Tab Selector */
+.barcode-card-tab-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+  background: #f1f5f9;
+  padding: 0.25rem;
+  border-radius: 10px;
+}
+
+.barcode-tab-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  padding: 0.5rem 0.6rem;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.barcode-tab-btn span {
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.barcode-tab-btn small {
+  font-size: 0.58rem;
+  color: #94a3b8;
+}
+
+.barcode-tab-btn.is-active {
+  background: #0f172a;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.18);
+}
+
+.barcode-tab-btn.is-active small {
+  color: #38bdf8;
+}
+
+/* Shoe QR Code Display Box */
+.shoe-qr-box {
+  background: #fafaf9;
+  border: 1px dashed rgba(21, 23, 19, 0.18);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 0.85rem;
+}
+
+.shoe-qr-image-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.shoe-qr-real-image {
+  width: 140px;
+  height: 140px;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 0.35rem;
+  border: 2px solid #0f172a;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.shoe-qr-real-image:hover {
+  transform: scale(1.05);
+}
+
+.shoe-qr-placeholder {
+  width: 140px;
+  height: 140px;
+  display: grid;
+  place-items: center;
+  font-size: 0.72rem;
+  color: #64748b;
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+.shoe-qr-scan-hint {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #059669;
+  text-align: center;
+}
+
+.shoe-qr-tools {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  width: 100%;
+}
+
+.btn-qr-tool {
+  background: #ffffff;
+  border: 1px solid rgba(21, 23, 19, 0.15);
+  border-radius: 6px;
+  padding: 0.35rem 0.65rem;
+  font-family: inherit;
+  font-size: 0.64rem;
+  font-weight: 700;
+  color: #1e293b;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.18s ease;
+}
+
+.btn-qr-tool:hover {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+}
+
+/* Fullscreen QR Modal */
+.qr-fullscreen-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 1300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.qr-fullscreen-card {
+  width: 100%;
+  max-width: 380px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 1.5rem;
+  color: #0f172a;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+  text-align: center;
+}
+
+.qr-fullscreen-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.qr-fullscreen-header h3 {
+  margin: 0.2rem 0 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.qr-fullscreen-close {
+  background: #f1f5f9;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.qr-fullscreen-img-box {
+  margin: 1rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.qr-fullscreen-img-box img {
+  width: 220px;
+  height: 220px;
+  border-radius: 12px;
+  border: 3px solid #0f172a;
+  padding: 0.4rem;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.15);
+}
+
+.qr-fullscreen-desc {
+  font-size: 0.75rem;
+  color: #475569;
+  line-height: 1.5;
+  margin-bottom: 1.2rem;
+}
+
+.qr-fullscreen-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+
+/* Mobile Native Camera & Fallback Elements */
+.btn-take-photo-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+  background: #38bdf8;
+  color: #0f172a;
+  border: none;
+  border-radius: 999px;
+  padding: 0.7rem 1.25rem;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(56, 189, 248, 0.4);
+}
+
+.btn-take-photo-primary:hover {
+  background: #0284c7;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.camera-notice-icon {
+  font-size: 2.2rem;
+  margin-bottom: 0.4rem;
+}
+
+.camera-notice-text {
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  line-height: 1.45;
+  margin: 0;
+  max-width: 320px;
+}
+
+.barcode-native-actions {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 0.65rem;
+  margin: 0.85rem 0;
+}
+
+.btn-native-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-native-action.primary {
+  background: #38bdf8;
+  color: #0f172a;
+  border: none;
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+}
+
+.btn-native-action.primary:hover {
+  background: #7dd3fc;
+  transform: translateY(-1px);
+}
+
+.btn-native-action.secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-native-action.secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.barcode-status-banner {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 8px;
+  padding: 0.55rem 0.85rem;
+  margin-bottom: 0.65rem;
+  color: #fbbf24;
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+.barcode-scanning-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.88);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: #ffffff;
+}
+
+.barcode-spinner {
+  width: 34px;
+  height: 34px;
+  border: 3px solid rgba(255, 255, 255, 0.15);
+  border-top-color: #38bdf8;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

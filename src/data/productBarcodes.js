@@ -83,3 +83,4 @@ export const getBarcodeInfo = (shoeId) => {
     }
   );
 };
+
